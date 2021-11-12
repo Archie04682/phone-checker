@@ -1,5 +1,7 @@
 from bs4 import BeautifulSoup
 from datetime import datetime, timedelta
+import logging
+
 from models.number_info import NumberInfo
 from models.number_review import NumberReview
 from models.number import TelephoneNumber
@@ -15,6 +17,30 @@ class NumberPageParser:
         return datetime.today() - timedelta(weeks=weeks)
 
     @staticmethod
+    def _calc_overall_rating(ratings: {int: str}):
+        total = 0
+        division_factor = 0
+        for count, rating_string in ratings.items():
+            division_factor += total
+            if rating_string == "положительная":
+                total += count * 5
+            elif rating_string == "отрицательная":
+                total += count * 1
+            else:
+                total += count * 3
+                if rating_string != "нейтральная":
+                    logging.info(f"Unknown rating string found: '{rating_string}'.")
+        return total / division_factor
+
+    @staticmethod
+    def _check_if_actual(reviews: [NumberReview]) -> bool:
+        today_datetime = datetime.today()
+        for review in reviews:
+            if (today_datetime - review.publish_date) < timedelta(days=90):
+                return True
+        return False
+
+    @staticmethod
     def _parse_number_info(soup: BeautifulSoup) -> NumberInfo:
 
         main_info_div = soup.find("div", class_="mainInfo")
@@ -27,7 +53,7 @@ class NumberPageParser:
         meta_info = [span.text.strip() for span in main_info_div.select("div.mainInfoHeader div.number span")]
 
         ratings_raw = [rating.text.split('x ') for rating in main_info_div.select("div.description div.ratings li")]
-        ratings = {rating[0].strip(): rating[-1].strip() for rating in ratings_raw}
+        ratings = {int(rating[0].strip()): rating[-1].strip() for rating in ratings_raw}
 
         categories_raw = [cat.text.split('x ') for cat in main_info_div.select("div.description div.categories li")]
         categories = {cat[0].strip(): cat[-1].strip() for cat in categories_raw}
@@ -109,5 +135,7 @@ class NumberPageParser:
 
         number_info = NumberPageParser._parse_number_info(soup)
         reviews = NumberPageParser._parse_number_reviews(soup)
+        overall_rating = NumberPageParser._calc_overall_rating(number_info.ratings)
+        is_actual = NumberPageParser._check_if_actual(reviews)
 
-        return TelephoneNumber(number_info, reviews)
+        return TelephoneNumber(overall_rating, is_actual, number_info, reviews)

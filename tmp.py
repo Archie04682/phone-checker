@@ -3,6 +3,11 @@
 import requests
 from bs4 import BeautifulSoup
 from parsers.neberitrubku.number_page_parser import NumberPageParser
+import logging
+
+
+logging.basicConfig(filename="log.txt", filemode='w', format='%(name)s - %(levelname)s - %(message)s')
+
 
 # with requests.get("https://www.neberitrubku.ru/nomer-telefona/89090000062") as response:
 with requests.get("https://www.neberitrubku.ru/nomer-telefona/89090001291") as response:
@@ -15,6 +20,8 @@ with requests.get("https://www.neberitrubku.ru/nomer-telefona/89090001291") as r
     soup = BeautifulSoup(doc, 'html.parser')
 
     num = NumberPageParser.parse(soup)
+    print(num.overall_rating)
+    print(num.is_actual)
     print(num.info.meta_info)
     print(num.info.digits)
     print(num.info.ratings)
@@ -37,4 +44,4 @@ with requests.get("https://www.neberitrubku.ru/nomer-telefona/89090001291") as r
 
 
 # TODO: Нормализовать номер - это лучше делать когда он приходит в запросе от клиента
-# TODO: Вычислить общий рейтинг номера и его актуальность
+

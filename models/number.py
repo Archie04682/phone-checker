@@ -3,6 +3,13 @@ from models.number_review import NumberReview
 
 
 class TelephoneNumber:
-    def __init__(self, info: NumberInfo, reviews: [NumberReview]):
+    def __init__(self,
+                 overall_rating: float,
+                 is_actual: bool,
+                 info: NumberInfo,
+                 reviews: [NumberReview]):
+
+        self.overall_rating = overall_rating
+        self.is_actual = is_actual
         self.info = info
         self.reviews = reviews
