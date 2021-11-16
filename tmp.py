@@ -4,15 +4,14 @@
 # from bs4 import BeautifulSoup
 # from parsers.neberitrubku.number_page_parser import NumberPageParser
 import logging
-import uuid
 
 from services.number_description_service import NumberDescriptionService
+from adapters.neberitrubku.nt_phone_data_adapter import NTPhoneDataAdapter
 
 logging.basicConfig(filename="log.txt", filemode='w', format='%(name)s - %(levelname)s - %(message)s')
 
-srv = NumberDescriptionService()
-trace = uuid.uuid1().hex
-res = srv.describe("89090005054", trace)
+srv = NumberDescriptionService([NTPhoneDataAdapter()])
+res = srv.describe("89090005054")
 
 print(res.as_dict())
 

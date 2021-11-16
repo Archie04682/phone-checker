@@ -2,13 +2,13 @@ from bs4 import BeautifulSoup
 from datetime import datetime, timedelta
 import logging
 
+from adapters.invalid_document_structure_error import InvalidDocumentStructureError
 from models.number_info import NumberInfo
 from models.number_review import NumberReview
 from models.number import TelephoneNumber
-from parsers.invalid_document_structure_error import InvalidDocumentStructureError
 
 
-class NumberPageParser:
+class NTPhoneDataParser:
 
     @staticmethod
     def _weeks_str_to_datetime(weeks_string) -> datetime:
@@ -17,6 +17,8 @@ class NumberPageParser:
 
     @staticmethod
     def _calc_overall_rating(ratings: {int: str}):
+        if not ratings:
+            return 0
         total = 0
         division_factor = 0
         for count, rating_string in ratings.items():
@@ -42,7 +44,10 @@ class NumberPageParser:
     @staticmethod
     def _parse_number_info(soup: BeautifulSoup) -> NumberInfo:
 
-        main_info_div = soup.find("div", class_="mainInfo")
+        if main_info_div := soup.find("div", class_="mainInfo"):
+            pass
+        else:
+            raise InvalidDocumentStructureError(soup.text)
 
         if digits_found := main_info_div.select_one("div.mainInfoHeader div.number"):
             digits = digits_found.find(text=True, recursive=False).text.strip()
@@ -60,7 +65,8 @@ class NumberPageParser:
         if description_found := main_info_div.select_one("div.description div.advanced div"):
             description = description_found.text.strip()
         else:
-            raise InvalidDocumentStructureError(soup.text)
+            logging.warning(f"Found no description for number: {digits}")
+            description = ""
 
         return NumberInfo(
             digits,
@@ -73,10 +79,14 @@ class NumberPageParser:
     @staticmethod
     def _parse_number_reviews(soup: BeautifulSoup) -> [NumberReview]:
 
-        reviews_raw = [review
-                       for review
-                       in soup.find_all("div", class_="review")
-                       if "reviewNew" not in review.attrs["class"]]
+        try:
+            reviews_raw = [review
+                           for review
+                           in soup.find_all("div", class_="review")
+                           if "reviewNew" not in review.attrs["class"]]
+        except KeyError:
+            raise InvalidDocumentStructureError(soup.text)
+
         reviews = []
 
         for review_raw in reviews_raw:
@@ -96,7 +106,7 @@ class NumberPageParser:
                 publish_date_is_precise = False
                 review_time_found = review_raw.find("span", class_="review_time")
                 if review_time_found:
-                    publish_date = NumberPageParser._weeks_str_to_datetime(review_time_found.text.strip())
+                    publish_date = NTPhoneDataParser._weeks_str_to_datetime(review_time_found.text.strip())
                 else:
                     raise InvalidDocumentStructureError(soup.text)
 
@@ -132,9 +142,9 @@ class NumberPageParser:
     @staticmethod
     def parse(soup: BeautifulSoup) -> TelephoneNumber:
 
-        number_info = NumberPageParser._parse_number_info(soup)
-        reviews = NumberPageParser._parse_number_reviews(soup)
-        overall_rating = NumberPageParser._calc_overall_rating(number_info.ratings)
-        is_actual = NumberPageParser._check_if_actual(reviews)
+        number_info = NTPhoneDataParser._parse_number_info(soup)
+        reviews = NTPhoneDataParser._parse_number_reviews(soup)
+        overall_rating = NTPhoneDataParser._calc_overall_rating(number_info.ratings)
+        is_actual = NTPhoneDataParser._check_if_actual(reviews)
 
         return TelephoneNumber(overall_rating, is_actual, number_info, reviews)
