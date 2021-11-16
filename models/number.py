@@ -13,3 +13,11 @@ class TelephoneNumber:
         self.is_actual = is_actual
         self.info = info
         self.reviews = reviews
+
+    def as_dict(self):
+        return {
+            "overall_rating": self.overall_rating,
+            "is_actual": self.is_actual,
+            "info": self.info.as_dict(),
+            "reviews": [review.as_dict() for review in self.reviews]
+        }

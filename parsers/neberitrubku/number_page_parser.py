@@ -13,7 +13,6 @@ class NumberPageParser:
     @staticmethod
     def _weeks_str_to_datetime(weeks_string) -> datetime:
         weeks = int(weeks_string.split(" ", 1)[0])
-        print(f"subtracted {weeks} weeks...")
         return datetime.today() - timedelta(weeks=weeks)
 
     @staticmethod
@@ -50,7 +49,7 @@ class NumberPageParser:
         else:
             raise InvalidDocumentStructureError(soup.text)
 
-        meta_info = [span.text.strip() for span in main_info_div.select("div.mainInfoHeader div.number span")]
+        meta_info = [' '.join(span.text.split()) for span in main_info_div.select("div.mainInfoHeader div.number span")]
 
         ratings_raw = [rating.text.split('x ') for rating in main_info_div.select("div.description div.ratings li")]
         ratings = {int(rating[0].strip()): rating[-1].strip() for rating in ratings_raw}

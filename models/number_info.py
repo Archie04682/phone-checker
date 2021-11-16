@@ -1,3 +1,10 @@
+# root: div.mainInfo
+#   digits: div.mainInfoHeader div.number
+#   meta_info: div.mainInfoHeader div.number span []
+#   categories: div.description div.ratings li {count, desc} (split by 'x ')
+#   description: div.description div.advanced div
+
+
 class NumberInfo:
     def __init__(
             self,
@@ -7,9 +14,17 @@ class NumberInfo:
             categories: {},
             description: str):
 
-        # root: div.mainInfo
-        self.digits = digits  # div.mainInfoHeader div.number
-        self.meta_info = meta_info  # div.mainInfoHeader div.number span []
-        self.ratings = ratings  # div.description div.ratings li {count, desc} (split by 'x ')
-        self.categories = categories  # div.description div.categories li {count, desc} (split by 'x ')
-        self.description = description  # div.description div.advanced div
+        self.digits = digits
+        self.meta_info = meta_info
+        self.ratings = ratings
+        self.categories = categories
+        self.description = description
+
+    def as_dict(self):
+        return {
+            "digits": self.digits,
+            "meta_info": self.meta_info,
+            "ratings": self.ratings,
+            "categories": self.categories,
+            "description": self.description
+        }
