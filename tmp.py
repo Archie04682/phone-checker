@@ -6,11 +6,11 @@
 import logging
 
 from services.number_description_service import NumberDescriptionService
-from adapters.neberitrubku.nt_phone_data_adapter import NTPhoneDataAdapter
+from adapters.neberitrubku.nt_phone_data_source import NTPhoneDataSource
 
 logging.basicConfig(filename="log.txt", filemode='w', format='%(name)s - %(levelname)s - %(message)s')
 
-srv = NumberDescriptionService([NTPhoneDataAdapter()])
+srv = NumberDescriptionService([NTPhoneDataSource()])
 res = srv.describe("89090005054")
 
 print(res.as_dict())

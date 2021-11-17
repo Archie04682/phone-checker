@@ -1,9 +1,9 @@
 import phonenumbers
-from adapters.phone_data_adapter import PhoneDataAdapter
+from adapters.phone_data_source import PhoneDataSource
 
 
 class NumberDescriptionService:
-    def __init__(self, phone_data_sources: [PhoneDataAdapter]):
+    def __init__(self, phone_data_sources: [PhoneDataSource]):
         self._phone_data_sources = phone_data_sources
 
     def describe(self, number: str):

@@ -2,7 +2,7 @@ import requests
 import logging
 from bs4 import BeautifulSoup
 
-from adapters.phone_data_adapter import PhoneDataAdapter
+from adapters.phone_data_source import PhoneDataSource
 from adapters.neberitrubku.nt_phone_data_parser import NTPhoneDataParser
 from adapters.invalid_document_structure_error import InvalidDocumentStructureError
 
@@ -12,7 +12,7 @@ from models.number import TelephoneNumber
 NTRUBKU_HOST = "https://www.neberitrubku.ru/nomer-telefona"
 
 
-class NTPhoneDataAdapter(PhoneDataAdapter):
+class NTPhoneDataSource(PhoneDataSource):
 
     def __init__(self):
         self._parser = NTPhoneDataParser()

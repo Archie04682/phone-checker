@@ -5,11 +5,11 @@ from flask import Flask, jsonify, Response
 
 from adapters.invalid_document_structure_error import InvalidDocumentStructureError
 from services.number_description_service import NumberDescriptionService
-from adapters.neberitrubku.nt_phone_data_adapter import NTPhoneDataAdapter
+from adapters.neberitrubku.nt_phone_data_source import NTPhoneDataSource
 
 app = Flask(__name__)
 app.config['JSON_AS_ASCII'] = False
-nd_service = NumberDescriptionService([NTPhoneDataAdapter()])
+nd_service = NumberDescriptionService([NTPhoneDataSource()])
 
 
 @app.route('/describe/<string:number>')

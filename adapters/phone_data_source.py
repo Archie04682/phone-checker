@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 from models.number import TelephoneNumber
 
 
-class PhoneDataAdapter(ABC):
+class PhoneDataSource(ABC):
 
     @abstractmethod
     def get_phone_info(self, phone_number: str) -> TelephoneNumber or None:
