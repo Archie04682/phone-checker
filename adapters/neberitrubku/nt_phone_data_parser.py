@@ -22,7 +22,7 @@ class NTPhoneDataParser:
         total = 0
         division_factor = 0
         for count, rating_string in ratings.items():
-            division_factor += total
+            division_factor += count
             if rating_string == "положительная":
                 total += count * 5
             elif rating_string == "отрицательная":
@@ -31,7 +31,7 @@ class NTPhoneDataParser:
                 total += count * 3
                 if rating_string != "нейтральная":
                     logging.info(f"Unknown rating string found: '{rating_string}'.")
-        return total / division_factor
+        return total / division_factor if division_factor != 0 else total / 1
 
     @staticmethod
     def _check_if_actual(reviews: [NumberReview]) -> bool:
