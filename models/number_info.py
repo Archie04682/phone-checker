@@ -5,6 +5,14 @@
 #   description: div.description div.advanced div
 
 
+class _Fields:
+    digits = "digits"
+    meta_info = "meta_info"
+    ratings = "ratings"
+    categories = "categories"
+    description = "description"
+
+
 class NumberInfo:
     def __init__(
             self,
@@ -22,9 +30,19 @@ class NumberInfo:
 
     def as_dict(self):
         return {
-            "digits": self.digits,
-            "meta_info": self.meta_info,
-            "ratings": self.ratings,
-            "categories": self.categories,
-            "description": self.description
+            _Fields.digits: self.digits,
+            _Fields.meta_info: self.meta_info,
+            _Fields.ratings: self.ratings,
+            _Fields.categories: self.categories,
+            _Fields.description: self.description
         }
+
+    @staticmethod
+    def from_dict(dictionary: {}):
+        return NumberInfo(
+            digits=dictionary[_Fields.digits],
+            meta_info=dictionary[_Fields.meta_info],
+            ratings=dictionary[_Fields.ratings],
+            categories=dictionary[_Fields.categories],
+            description=dictionary[_Fields.description]
+        )
