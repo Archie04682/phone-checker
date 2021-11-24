@@ -10,7 +10,10 @@ from services.number_cache_service import NumberCacheService
 
 
 def get_pg_cache_service(app: Flask, cache_actuality: timedelta):
-    app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', 'postgresql://postgres:qwerty@localhost/phones')
+    # Below is the hack for Heroku:
+    app.config['SQLALCHEMY_DATABASE_URI'] = \
+        os.environ.get('DATABASE_URL', 'postgresql://postgres:qwerty@localhost/phones')\
+                  .replace('postgres', 'postgresql', 1)
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     db = SQLAlchemy(app)
 
