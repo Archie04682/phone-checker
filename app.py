@@ -1,31 +1,22 @@
 from flask import Flask, jsonify
 from datetime import timedelta
-import logging
 
 from adapters.invalid_document_structure_error import InvalidDocumentStructureError
 from adapters.neberitrubku.nt_phone_data_source import NTPhoneDataSource
 from services.number_description_service import NumberDescriptionService
 from services.pg.pg_number_cache_service import get_pg_cache_service
 from services.number_normalize_service import NumberNormalizeService
+from services.logger_provider import get_logger
 
 app = Flask(__name__)
 app.config['JSON_AS_ASCII'] = False
 
 nd_service = NumberDescriptionService([NTPhoneDataSource()])
 cache_service = get_pg_cache_service(app, timedelta(weeks=2))
-
-logger = logging.getLogger('flask-app')
-file_handler = logging.FileHandler("flask-app-log.txt")
-stream_handler = logging.StreamHandler()
-formatter = logging.Formatter('[%(asctime)s] %(name)s-%(levelname)s: %(message)s')
-file_handler.setFormatter(formatter)
-stream_handler.setFormatter(formatter)
-logger.addHandler(file_handler)
-logger.addHandler(stream_handler)
-logger.setLevel(logging.INFO)
+logger = get_logger()
 
 
-@app.route('/describe/<string:number>')
+@app.route('/api/v1/<string:number>')
 def describe(number: str):
     try:
         normalized_number = NumberNormalizeService.normalize(number)
@@ -50,6 +41,7 @@ def describe(number: str):
 
 
 if __name__ == '__main__':
+    logger.info("Service started!")
     app.run(debug=True)
 
 # TODO: Deal with error propagation and logging!

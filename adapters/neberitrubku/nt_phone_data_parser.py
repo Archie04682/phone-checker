@@ -1,5 +1,5 @@
 from bs4 import BeautifulSoup
-from datetime import datetime, timedelta
+from datetime import date, datetime, timedelta
 import logging
 
 from adapters.invalid_document_structure_error import InvalidDocumentStructureError
@@ -11,9 +11,9 @@ from models.number import TelephoneNumber
 class NTPhoneDataParser:
 
     @staticmethod
-    def _weeks_str_to_datetime(weeks_string) -> datetime:
+    def _weeks_str_to_datetime(weeks_string) -> date:
         weeks = int(weeks_string.split(" ", 1)[0])
-        return datetime.today() - timedelta(weeks=weeks)
+        return date.today() - timedelta(weeks=weeks)
 
     @staticmethod
     def _calc_overall_rating(ratings: {int: str}):
@@ -35,9 +35,9 @@ class NTPhoneDataParser:
 
     @staticmethod
     def _check_if_actual(reviews: [NumberReview]) -> bool:
-        today_datetime = datetime.today()
+        today_date = date.today()
         for review in reviews:
-            if (today_datetime - review.publish_date) < timedelta(days=90):
+            if (today_date - review.publish_date) < timedelta(days=90):
                 return True
         return False
 
@@ -100,7 +100,7 @@ class NTPhoneDataParser:
 
             publish_date_found = review_raw.find("time", {"itemprop": "datePublished"})
             if publish_date_found:
-                publish_date = datetime.fromisoformat(publish_date_found.attrs["datetime"])
+                publish_date = datetime.fromisoformat(publish_date_found.attrs["datetime"]).date()
                 publish_date_is_precise = True
             else:
                 publish_date_is_precise = False

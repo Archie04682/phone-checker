@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import date
 
 # root: div.review
 #   rating: div.score meta(itemprop="ratingValue")
@@ -25,7 +25,7 @@ class NumberReview:
             self,
             rating: float,
             tags: [str],
-            publish_date: datetime,
+            publish_date: date,
             is_precise: bool,
             author: str,
             title: str, body: str):
@@ -54,7 +54,7 @@ class NumberReview:
         return NumberReview(
             rating=dictionary[_Fields.rating],
             tags=dictionary[_Fields.tags],
-            publish_date=datetime.fromisoformat(dictionary[_Fields.publish_date]),
+            publish_date=date.fromisoformat(dictionary[_Fields.publish_date]),
             is_precise=dictionary[_Fields.is_precise],
             author=dictionary[_Fields.author],
             title=dictionary[_Fields.title],
