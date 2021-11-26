@@ -1,4 +1,4 @@
-from flask import Flask, jsonify
+from flask import Flask, jsonify, render_template
 from datetime import timedelta
 
 from adapters.invalid_document_structure_error import InvalidDocumentStructureError
@@ -16,7 +16,12 @@ cache_service = get_pg_cache_service(app, timedelta(weeks=2))
 logger = get_logger()
 
 
-@app.route('/api/v1/<string:number>')
+@app.route('/')
+def index():
+    return render_template('index.html')
+
+
+@app.route('/api/number/<string:number>')
 def describe(number: str):
     try:
         normalized_number = NumberNormalizeService.normalize(number)
