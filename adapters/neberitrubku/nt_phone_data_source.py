@@ -4,7 +4,7 @@ from bs4 import BeautifulSoup
 
 from adapters.phone_data_source import PhoneDataSource
 from adapters.neberitrubku.nt_phone_data_parser import NTPhoneDataParser
-from adapters.invalid_document_structure_error import InvalidDocumentStructureError
+from adapters.exceptions import InvalidDocumentStructureError, PhoneDataNotFoundError
 
 # TODO: Move settings to some file of something...
 from models.number import TelephoneNumber
@@ -40,6 +40,10 @@ class NTPhoneDataSource(PhoneDataSource):
         }
 
         with requests.get(f"{NTRUBKU_HOST}/{phone_number}", headers=heads) as response:
+
+            if response.status_code == 404:
+                raise PhoneDataNotFoundError(response.text)
+
             if response.status_code != 200:
                 return None
 

@@ -2,7 +2,7 @@ from bs4 import BeautifulSoup
 from datetime import date, datetime, timedelta
 import logging
 
-from adapters.invalid_document_structure_error import InvalidDocumentStructureError
+from adapters.exceptions import InvalidDocumentStructureError
 from models.number_info import NumberInfo
 from models.number_review import NumberReview
 from models.number import TelephoneNumber
