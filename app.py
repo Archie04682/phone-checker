@@ -1,8 +1,10 @@
+import html
+
 from flask import Flask, jsonify, render_template, redirect, url_for, request
 from datetime import timedelta
 from flask_wtf import FlaskForm
-from wtforms import Form, StringField, EmailField
-from wtforms.validators import DataRequired
+from wtforms import Form, StringField, EmailField, SubmitField
+from wtforms.validators import DataRequired, Email
 from flask_bootstrap import Bootstrap
 from os import environ
 
@@ -23,7 +25,6 @@ cache_service = get_pg_cache_service(app, timedelta(weeks=2))
 logger = get_logger()
 
 # WTForms
-
 from services.number_normalize_service import NumberNormalizeService
 from phonenumbers import NumberParseException
 from wtforms import ValidationError
@@ -39,23 +40,45 @@ def validate_phone_number(form, field):
 
 
 class PhoneNumberForm(FlaskForm):
-    phone_number = StringField('Номер Телефона', validators=[
-        DataRequired("Поле не должно быть пустым"), validate_phone_number
-    ])
+    phone_number = StringField('phone-field',
+        validators=[DataRequired("Поле не должно быть пустым"), validate_phone_number])
+    submit = SubmitField('Проверить')
 
+
+class EmailForm(FlaskForm):
+    email = EmailField("Email-адрес:", validators=[Email("Неверный формат email")])
+    submit = SubmitField("Отправить")
 #
 
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
+    print('FIRE!')
     phone_form = PhoneNumberForm()
+    email_form = EmailForm()
+
     if phone_form.validate_on_submit():
-        return redirect(url_for('describe', number=phone_form.phone_number.data))
-    return render_template('index.html', phoneForm=phone_form)
+        return redirect(url_for('number_info', number=phone_form.phone_number.data))
+
+    # if request.method == 'POST':
+    #     if phone_form.submit.data and phone_form.validate():
+    #         return redirect(url_for('number_info', number=phone_form.phone_number.data))
+    #     if email_form.submit.data and email_form.validate():
+    #         pass
+
+    return render_template('index.html', phoneForm=phone_form, emailForm=email_form)
+
+
+@app.route('/subscribe/<string:email>')
+def subscribe(email: str):
+    email_form = EmailForm()
+    if email_form.validate_on_submit():
+        pass
+    redirect('index.html')
 
 
 @app.route('/api/number/<string:number>')
-def describe(number: str):
+def number_info(number: str):
     try:
         normalized_number = NumberNormalizeService.normalize(number)
 
