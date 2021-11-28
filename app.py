@@ -1,9 +1,7 @@
-import html
-
 from flask import Flask, jsonify, render_template, redirect, url_for, request
 from datetime import timedelta
 from flask_wtf import FlaskForm
-from wtforms import Form, StringField, EmailField, SubmitField
+from wtforms import StringField, EmailField, SubmitField
 from wtforms.validators import DataRequired, Email
 from flask_bootstrap import Bootstrap
 from os import environ
@@ -53,7 +51,6 @@ class EmailForm(FlaskForm):
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
-    print('FIRE!')
     phone_form = PhoneNumberForm()
     email_form = EmailForm()
 

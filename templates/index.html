@@ -17,15 +17,29 @@
     <link href="https://fonts.googleapis.com/css?family=Lato:300,400,700,300italic,400italic,700italic" rel="stylesheet"
           type="text/css"/>
     <!-- Core theme CSS (includes Bootstrap)-->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
     <link href="{{ url_for("static", filename="css/styles.css") }}" rel="stylesheet"/>
 </head>
 <body>
 <!-- Navigation-->
-<nav class="navbar navbar-light bg-light static-top">
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
     <div class="container">
-        <a class="navbar-brand" href="/">Phony</a>
-        {#<a class="btn btn-primary" href="#signup">Sign Up</a>#}
+        <a class="navbar-brand h1" href="/">Phony</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarToggler" aria-controls="navbarToggler" aria-expanded="false" aria-label="Открыть меню">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarToggler">
+            <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+              <li class="nav-item active">
+                <a class="nav-link active" href="/">Главная</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="#">Бот</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="#">API</a>
+              </li>
+            </ul>
+        </div>
     </div>
 </nav>
 <!-- Masthead-->
@@ -161,7 +175,24 @@
         <div class="row justify-content-center">
             <div class="col-xl-6">
                 <h2 class="mb-4">Оставьте свой email, чтобы быстрее узнавать о новых возможностях API:</h2>
-                {{ wtf.quick_form(emailForm, novalidate=True) }}
+                <form method="POST" action="/" novalidate>
+                    {{ emailForm.csrf_token }}
+                    <div class="row">
+                        <div class="col">
+                            {{ emailForm.email(class_="form-control") }}
+                            {% if emailForm.email.errors %}
+                                <ul class="errors">
+                                    {% for error in emailForm.email.errors %}
+                                        <li style="list-style-type: none;"><small class="form-text text-warning">{{ error }}</small></li>
+                                    {% endfor %}
+                                </ul>
+                            {% endif %}
+                        </div>
+                        <div class="col-3">
+                            {{ emailForm.submit(class_="btn btn-primary btn-block") }}
+                        </div>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
@@ -172,13 +203,13 @@
         <div class="row">
             <div class="col-lg-6 h-100 text-center text-lg-start my-auto">
                 <ul class="list-inline mb-2">
-                    <li class="list-inline-item"><a href="#!">About</a></li>
+                    <li class="list-inline-item"><a href="#!">О сервисе</a></li>
                     <li class="list-inline-item">⋅</li>
-                    <li class="list-inline-item"><a href="#!">Contact</a></li>
+                    <li class="list-inline-item"><a href="#!">Контакты</a></li>
                     <li class="list-inline-item">⋅</li>
-                    <li class="list-inline-item"><a href="#!">Terms of Use</a></li>
+                    <li class="list-inline-item"><a href="#!">Условия использования</a></li>
                     <li class="list-inline-item">⋅</li>
-                    <li class="list-inline-item"><a href="#!">Privacy Policy</a></li>
+                    <li class="list-inline-item"><a href="#!">Политика конфиденциальности</a></li>
                 </ul>
                 <p class="text-muted small mb-4 mb-lg-0">&copy; Phony 2021. Все права защищены.</p>
             </div>
