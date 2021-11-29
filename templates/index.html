@@ -143,7 +143,7 @@
                             {% if emailForm.email.errors %}
                                 <ul class="errors">
                                     {% for error in emailForm.email.errors %}
-                                        <li style="list-style-type: none;"><small class="form-text text-warning">{{ error }}</small></li>
+                                        <li><small class="form-text text-warning">{{ error }}</small></li>
                                     {% endfor %}
                                 </ul>
                             {% endif %}
