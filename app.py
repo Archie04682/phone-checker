@@ -66,6 +66,11 @@ def index():
     return render_template('index.html', phoneForm=phone_form, emailForm=email_form)
 
 
+@app.route('/number/<string:num>')
+def number(num: str):
+    return render_template('number.html')
+
+
 @app.route('/subscribe/<string:email>')
 def subscribe(email: str):
     email_form = EmailForm()
