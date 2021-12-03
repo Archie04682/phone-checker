@@ -10,7 +10,6 @@ from adapters.exceptions import InvalidDocumentStructureError, PhoneDataNotFound
 from adapters.neberitrubku.nt_phone_data_source import NTPhoneDataSource
 from services.number_description_service import NumberDescriptionService
 from services.pg.pg_number_cache_service import get_pg_cache_service
-from services.number_normalize_service import NumberNormalizeService
 from services.logger_provider import get_logger
 
 app = Flask(__name__)
@@ -18,9 +17,10 @@ app.config['JSON_AS_ASCII'] = False
 app.secret_key = environ.get('FLASK_SECRET_KEY')
 Bootstrap(app)
 
-nd_service = NumberDescriptionService([NTPhoneDataSource()])
+# Manual DI =)
 cache_service = get_pg_cache_service(app, timedelta(weeks=2))
 logger = get_logger()
+nd_service = NumberDescriptionService(cache_service, [NTPhoneDataSource()], logger)
 
 # WTForms
 from services.number_normalize_service import NumberNormalizeService
@@ -39,13 +39,15 @@ def validate_phone_number(form, field):
 
 class PhoneNumberForm(FlaskForm):
     phone_number = StringField('phone-field',
-        validators=[DataRequired("Поле не должно быть пустым"), validate_phone_number])
+                               validators=[DataRequired("Поле не должно быть пустым"), validate_phone_number])
     submit = SubmitField('Проверить')
 
 
 class EmailForm(FlaskForm):
     email = EmailField("Email-адрес:", validators=[Email("Неверный формат email")])
     submit = SubmitField("Отправить")
+
+
 #
 
 
@@ -55,7 +57,7 @@ def index():
     email_form = EmailForm()
 
     if phone_form.validate_on_submit():
-        return redirect(url_for('number_info', number=phone_form.phone_number.data))
+        return redirect(url_for('number', num=phone_form.phone_number.data))
 
     # if request.method == 'POST':
     #     if phone_form.submit.data and phone_form.validate():
@@ -68,7 +70,15 @@ def index():
 
 @app.route('/number/<string:num>')
 def number(num: str):
-    return render_template('number.html')
+    try:
+        normalized_number = NumberNormalizeService.normalize(num)
+        description = nd_service.describe(normalized_number)
+    except InvalidDocumentStructureError as err:
+        return render_template('server_error.html')
+    except PhoneDataNotFoundError as err:
+        return render_template('not_found.html')
+
+    return render_template('number.html', phoneNumber=description)
 
 
 @app.route('/subscribe/<string:email>')
@@ -79,26 +89,17 @@ def subscribe(email: str):
     redirect('index.html')
 
 
-@app.route('/api/number/<string:number>')
-def number_info(number: str):
+@app.route('/api/number/<string:num>')
+def number_info(num: str):
     try:
-        normalized_number = NumberNormalizeService.normalize(number)
-
-        if cached_description := cache_service.get(normalized_number):
-            description = cached_description
-            logger.info(f"Retrieved cached version for {number}")
-        else:
-            description = nd_service.describe(number)
-            cache_service.put(normalized_number, description)
-            logger.info(f"Requested new version for {number}")
-
+        normalized_number = NumberNormalizeService.normalize(num)
+        description = nd_service.describe(normalized_number)
     except InvalidDocumentStructureError as err:
         return jsonify(is_success=False, error_message=f"Failed To Process Request: {err.message}"), 500
     except PhoneDataNotFoundError as err:
         return jsonify(is_success=False, error_message=f"Phone Info Not Found"), 404
 
     # TODO: Fix except blocks if there are any errors:
-
     # except:
     #     return jsonify(is_success=False, error_message=f"Failed To Process Request: unknown reason"), 500
 

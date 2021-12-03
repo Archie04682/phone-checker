@@ -1,16 +1,36 @@
 {% extends "base_template.html" %}
 
+{% block title %}
+    {{ phoneNumber.info.digits }} - Информация о номере
+{% endblock %}
+
 {% block content %}
 
     <div class="container">
-    <div class="row">
-        <div class="col-4">
-            test
+
+        <div class="row">
+            <p class="h1">{{ phoneNumber.info.digits }}
+            {% if phoneNumber.overall_rating == 0.0 %}
+                <span class="badge rounded-pill bg-secondary">{{ "%.2f"|format(phoneNumber.overall_rating|float) }}</span>
+            {%  elif phoneNumber.overall_rating >= 4.0 %}
+                <span class="badge rounded-pill bg-success">{{ "%.2f"|format(phoneNumber.overall_rating|float) }}</span>
+            {% elif phoneNumber.overall_rating >= 3.0 %}
+                <span class="badge rounded-pill bg-warning">{{ "%.2f"|format(phoneNumber.overall_rating|float) }}</span>
+            {% else %}
+                <span class="badge rounded-pill bg-danger">{{ "%.2f"|format(phoneNumber.overall_rating|float) }}</span>
+            {% endif %}
+            </p>
         </div>
-        <div class="col">
-            test
+
+        <div class="row">
+            <div class="col-4">
+                test
+            </div>
+            <div class="col">
+                test
+            </div>
         </div>
-    </div>
+
     </div>
 
 {% endblock %}

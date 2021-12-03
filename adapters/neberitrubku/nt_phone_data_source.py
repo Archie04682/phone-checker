@@ -1,6 +1,7 @@
 import requests
 import logging
 from bs4 import BeautifulSoup
+from typing import Optional
 
 from adapters.phone_data_source import PhoneDataSource
 from adapters.neberitrubku.nt_phone_data_parser import NTPhoneDataParser
@@ -19,7 +20,7 @@ class NTPhoneDataSource(PhoneDataSource):
     def self_describe(self) -> str:
         return "neberitrubku_2192571f-01ef-4198-a508-2a92f717f735"
 
-    def get_phone_info(self, phone_number: str) -> TelephoneNumber or None:
+    def get_phone_info(self, phone_number: str) -> Optional[TelephoneNumber]:
         heads = {
             # ":authority": 'www.neberitrubku.ru',
             # ':method': 'GET',

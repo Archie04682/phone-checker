@@ -34,14 +34,6 @@ class NTPhoneDataParser:
         return total / division_factor if division_factor != 0 else total / 1
 
     @staticmethod
-    def _check_if_actual(reviews: [NumberReview]) -> bool:
-        today_date = date.today()
-        for review in reviews:
-            if (today_date - review.publish_date) < timedelta(days=90):
-                return True
-        return False
-
-    @staticmethod
     def _parse_number_info(soup: BeautifulSoup) -> NumberInfo:
 
         if main_info_div := soup.find("div", class_="mainInfo"):
@@ -145,6 +137,5 @@ class NTPhoneDataParser:
         number_info = NTPhoneDataParser._parse_number_info(soup)
         reviews = NTPhoneDataParser._parse_number_reviews(soup)
         overall_rating = NTPhoneDataParser._calc_overall_rating(number_info.ratings)
-        is_actual = NTPhoneDataParser._check_if_actual(reviews)
 
-        return TelephoneNumber(overall_rating, is_actual, number_info, reviews)
+        return TelephoneNumber(overall_rating, number_info, reviews)
