@@ -7,30 +7,119 @@
 {% block content %}
 
     <div class="container">
-
         <div class="row">
-            <p class="h1">{{ phoneNumber.info.digits }}
-            {% if phoneNumber.overall_rating == 0.0 %}
-                <span class="badge rounded-pill bg-secondary">{{ "%.2f"|format(phoneNumber.overall_rating|float) }}</span>
-            {%  elif phoneNumber.overall_rating >= 4.0 %}
-                <span class="badge rounded-pill bg-success">{{ "%.2f"|format(phoneNumber.overall_rating|float) }}</span>
-            {% elif phoneNumber.overall_rating >= 3.0 %}
-                <span class="badge rounded-pill bg-warning">{{ "%.2f"|format(phoneNumber.overall_rating|float) }}</span>
-            {% else %}
-                <span class="badge rounded-pill bg-danger">{{ "%.2f"|format(phoneNumber.overall_rating|float) }}</span>
-            {% endif %}
-            </p>
+            {# Номер и рейтинг #}
+            <div class="col-md-6 p-4">
+                <p class="h5">Номер:</p>
+                <p class="h1">{{ phoneNumber.info.digits }}
+                    {% if phoneNumber.overall_rating == 0.0 %}
+                        <span class="badge rounded-pill bg-secondary">{{ "%.2f"|format(phoneNumber.overall_rating|float) }}</span>
+                    {% elif phoneNumber.overall_rating >= 4.0 %}
+                        <span class="badge rounded-pill bg-success">{{ "%.2f"|format(phoneNumber.overall_rating|float) }}</span>
+                    {% elif phoneNumber.overall_rating >= 3.0 %}
+                        <span class="badge rounded-pill bg-warning">{{ "%.2f"|format(phoneNumber.overall_rating|float) }}</span>
+                    {% else %}
+                        <span class="badge rounded-pill bg-danger">{{ "%.2f"|format(phoneNumber.overall_rating|float) }}</span>
+                    {% endif %}
+                </p>
+            </div>
+
+            {# Информация о номере #}
+            <div class="col-md-6 p-4">
+                {% if phoneNumber.info.description|length %}
+                    <p>{{ phoneNumber.info.description }}</p>
+                {% endif %}
+
+                {% if phoneNumber.info.categories|length %}
+                    <p class="h5">Категории:</p>
+                    <p>
+                        {% for cat in phoneNumber.info.categories.values() %}
+                            <span class="badge rounded-pill bg-primary">{{ cat }}</span>
+                        {% endfor %}
+                    </p>
+                {% endif %}
+
+                <p>
+                    {% if phoneNumber.is_actual %}
+                        Информация о номере недавно обновлялась.
+                    {% else %}
+                        Информация о номере давно не обновлялась и может быть неактуальной.
+                    {% endif %}
+                </p>
+            </div>
         </div>
 
-        <div class="row">
-            <div class="col-4">
-                test
+        {# Актуальные отзывы #}
+        {% if phoneNumber.actual_reviews|length > 0 %}
+            <div class="row">
+                <div class="col p-4">
+                    <p class="h5">Отзывы:</p>
+                    {% for rev in phoneNumber.actual_reviews %}
+                        <div class="card mb-4">
+                            <div class="card-body">
+                                <h5 class="card-title">
+                                    {{ rev.title }}
+                                    {% if rev.rating == 0.0 %}
+                                        <span class="badge rounded-pill bg-secondary">{{ "%.2f"|format(rev.rating|float) }}</span>
+                                    {% elif rev.rating >= 4.0 %}
+                                        <span class="badge rounded-pill bg-success">{{ "%.2f"|format(rev.rating|float) }}</span>
+                                    {% elif rev.rating >= 3.0 %}
+                                        <span class="badge rounded-pill bg-warning">{{ "%.2f"|format(rev.rating|float) }}</span>
+                                    {% else %}
+                                        <span class="badge rounded-pill bg-danger">{{ "%.2f"|format(rev.rating|float) }}</span>
+                                    {% endif %}
+                                </h5>
+                                <p class="card-text">{{ rev.body }}</p>
+                                <p>
+                                    <span class="card-subtitle mb-2 text-muted h6">{{ rev.author }}, {{ rev.publish_date }}</span>
+                                </p>
+                                {% if rev.tags|length %}
+                                    {% for tag in rev.tags %}
+                                        <span class="badge rounded-pill bg-primary">{{ tag }}</span>
+                                    {% endfor %}
+                                {% endif %}
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
             </div>
-            <div class="col">
-                test
-            </div>
-        </div>
+        {% endif %}
 
+        {# Старые отзывы #}
+        {% if phoneNumber.old_reviews|length > 0 %}
+            <div class="row">
+                <div class="col p-4">
+                    <p class="h5">Неактуальные отзывы:</p>
+                    {% for rev in phoneNumber.old_reviews %}
+                        <div class="card mb-4">
+                            <div class="card-body">
+                                <h5 class="card-title">
+                                    {{ rev.title }}
+                                    {% if rev.rating == 0.0 %}
+                                        <span class="badge rounded-pill bg-secondary">{{ "%.2f"|format(rev.rating|float) }}</span>
+                                    {% elif rev.rating >= 4.0 %}
+                                        <span class="badge rounded-pill bg-success">{{ "%.2f"|format(rev.rating|float) }}</span>
+                                    {% elif rev.rating >= 3.0 %}
+                                        <span class="badge rounded-pill bg-warning">{{ "%.2f"|format(rev.rating|float) }}</span>
+                                    {% else %}
+                                        <span class="badge rounded-pill bg-danger">{{ "%.2f"|format(rev.rating|float) }}</span>
+                                    {% endif %}
+                                </h5>
+                                <p class="card-text">{{ rev.body }}</p>
+                                <p>
+                                    <span class="card-subtitle mb-2 text-muted h6">{{ rev.author }}, {{ rev.publish_date }}</span>
+                                </p>
+                                {% if rev.tags|length %}
+                                    {% for tag in rev.tags %}
+                                        <span class="badge rounded-pill bg-primary">{{ tag }}</span>
+                                    {% endfor %}
+                                {% endif %}
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        {% endif %}
     </div>
 
 {% endblock %}
