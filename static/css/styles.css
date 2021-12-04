@@ -102,3 +102,7 @@ a {
 li {
   list-style-type: none;
 }
+
+p.card-bottom-line {
+  margin-bottom: 0;
+}

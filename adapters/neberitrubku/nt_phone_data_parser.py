@@ -12,7 +12,11 @@ class NTPhoneDataParser:
 
     @staticmethod
     def _weeks_str_to_datetime(weeks_string) -> date:
-        weeks = int(weeks_string.split(" ", 1)[0])
+        weeks_str = weeks_string.split(" ", 1)[0].lower()
+        if weeks_str == "один":
+            weeks = 1
+        else:
+            weeks = int(weeks_str)
         return date.today() - timedelta(weeks=weeks)
 
     @staticmethod
@@ -104,6 +108,8 @@ class NTPhoneDataParser:
 
             if author_found := review_raw.find("span", {"itemprop": "author"}):
                 author = author_found.text.strip()
+                if author == "НБТ Пользователь":
+                    author = "Анонимно"
             else:
                 raise InvalidDocumentStructureError(soup.text)
 

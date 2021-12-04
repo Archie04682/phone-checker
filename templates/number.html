@@ -9,23 +9,23 @@
     <div class="container">
         <div class="row">
             {# Номер и рейтинг #}
-            <div class="col-md-6 p-4">
+            <div class="col-lg-6 p-4">
                 <p class="h5">Номер:</p>
                 <p class="h1">{{ phoneNumber.info.digits }}
                     {% if phoneNumber.overall_rating == 0.0 %}
-                        <span class="badge rounded-pill bg-secondary">{{ "%.2f"|format(phoneNumber.overall_rating|float) }}</span>
+                        <span class="badge rounded-pill bg-secondary">{{ "%.1f"|format(phoneNumber.overall_rating|float) }}</span>
                     {% elif phoneNumber.overall_rating >= 4.0 %}
-                        <span class="badge rounded-pill bg-success">{{ "%.2f"|format(phoneNumber.overall_rating|float) }}</span>
+                        <span class="badge rounded-pill bg-success">{{ "%.1f"|format(phoneNumber.overall_rating|float) }}</span>
                     {% elif phoneNumber.overall_rating >= 3.0 %}
-                        <span class="badge rounded-pill bg-warning">{{ "%.2f"|format(phoneNumber.overall_rating|float) }}</span>
+                        <span class="badge rounded-pill bg-warning">{{ "%.1f"|format(phoneNumber.overall_rating|float) }}</span>
                     {% else %}
-                        <span class="badge rounded-pill bg-danger">{{ "%.2f"|format(phoneNumber.overall_rating|float) }}</span>
+                        <span class="badge rounded-pill bg-danger">{{ "%.1f"|format(phoneNumber.overall_rating|float) }}</span>
                     {% endif %}
                 </p>
             </div>
 
             {# Информация о номере #}
-            <div class="col-md-6 p-4">
+            <div class="col-lg-6 p-4">
                 {% if phoneNumber.info.description|length %}
                     <p>{{ phoneNumber.info.description }}</p>
                 {% endif %}
@@ -50,28 +50,32 @@
         </div>
 
         {# Актуальные отзывы #}
-        {% if phoneNumber.actual_reviews|length > 0 %}
-            <div class="row">
-                <div class="col p-4">
+        <div class="row">
+            {% if phoneNumber.actual_reviews|length > 0 %}
+                <div class="col-lg-6 p-4">
                     <p class="h5">Отзывы:</p>
                     {% for rev in phoneNumber.actual_reviews %}
-                        <div class="card mb-4">
-                            <div class="card-body">
-                                <h5 class="card-title">
+                        <div class="card mb-3">
+                            <div class="card-header">
+                                <h5 class="card-title mt-1">
                                     {{ rev.title }}
                                     {% if rev.rating == 0.0 %}
-                                        <span class="badge rounded-pill bg-secondary">{{ "%.2f"|format(rev.rating|float) }}</span>
+                                        <span class="badge rounded-pill bg-secondary">{{ "%.1f"|format(rev.rating|float) }}</span>
                                     {% elif rev.rating >= 4.0 %}
-                                        <span class="badge rounded-pill bg-success">{{ "%.2f"|format(rev.rating|float) }}</span>
+                                        <span class="badge rounded-pill bg-success">{{ "%.1f"|format(rev.rating|float) }}</span>
                                     {% elif rev.rating >= 3.0 %}
-                                        <span class="badge rounded-pill bg-warning">{{ "%.2f"|format(rev.rating|float) }}</span>
+                                        <span class="badge rounded-pill bg-warning">{{ "%.1f"|format(rev.rating|float) }}</span>
                                     {% else %}
-                                        <span class="badge rounded-pill bg-danger">{{ "%.2f"|format(rev.rating|float) }}</span>
+                                        <span class="badge rounded-pill bg-danger">{{ "%.1f"|format(rev.rating|float) }}</span>
                                     {% endif %}
                                 </h5>
-                                <p class="card-text">{{ rev.body }}</p>
-                                <p>
-                                    <span class="card-subtitle mb-2 text-muted h6">{{ rev.author }}, {{ rev.publish_date }}</span>
+                            </div>
+                            <div class="card-body">
+                                {% if rev.body %}
+                                    <p class="card-text">{{ rev.body }}</p>
+                                {% endif %}
+                                <p class="card-bottom-line">
+                                    <span class="card-subtitle mb-2 text-muted h6">{{ rev.author }}, {{ rev.publish_date.strftime('%d.%m.%Y') }}</span>
                                 </p>
                                 {% if rev.tags|length %}
                                     {% for tag in rev.tags %}
@@ -82,32 +86,34 @@
                         </div>
                     {% endfor %}
                 </div>
-            </div>
-        {% endif %}
+            {% endif %}
 
-        {# Старые отзывы #}
-        {% if phoneNumber.old_reviews|length > 0 %}
-            <div class="row">
-                <div class="col p-4">
+            {# Старые отзывы #}
+            {% if phoneNumber.old_reviews|length > 0 %}
+                <div class="col-lg-6 p-4">
                     <p class="h5">Неактуальные отзывы:</p>
                     {% for rev in phoneNumber.old_reviews %}
-                        <div class="card mb-4">
-                            <div class="card-body">
-                                <h5 class="card-title">
+                        <div class="card mb-3">
+                            <div class="card-header">
+                                <h5 class="card-title mt-1">
                                     {{ rev.title }}
                                     {% if rev.rating == 0.0 %}
-                                        <span class="badge rounded-pill bg-secondary">{{ "%.2f"|format(rev.rating|float) }}</span>
+                                        <span class="badge rounded-pill bg-secondary">{{ "%.1f"|format(rev.rating|float) }}</span>
                                     {% elif rev.rating >= 4.0 %}
-                                        <span class="badge rounded-pill bg-success">{{ "%.2f"|format(rev.rating|float) }}</span>
+                                        <span class="badge rounded-pill bg-success">{{ "%.1f"|format(rev.rating|float) }}</span>
                                     {% elif rev.rating >= 3.0 %}
-                                        <span class="badge rounded-pill bg-warning">{{ "%.2f"|format(rev.rating|float) }}</span>
+                                        <span class="badge rounded-pill bg-warning">{{ "%.1f"|format(rev.rating|float) }}</span>
                                     {% else %}
-                                        <span class="badge rounded-pill bg-danger">{{ "%.2f"|format(rev.rating|float) }}</span>
+                                        <span class="badge rounded-pill bg-danger">{{ "%.1f"|format(rev.rating|float) }}</span>
                                     {% endif %}
                                 </h5>
-                                <p class="card-text">{{ rev.body }}</p>
-                                <p>
-                                    <span class="card-subtitle mb-2 text-muted h6">{{ rev.author }}, {{ rev.publish_date }}</span>
+                            </div>
+                            <div class="card-body">
+                                {% if rev.body %}
+                                    <p class="card-text">{{ rev.body }}</p>
+                                {% endif %}
+                                <p class="card-bottom-line">
+                                    <span class="card-subtitle mb-2 text-muted h6">{{ rev.author }}, {{ rev.publish_date.strftime('%d.%m.%Y') }}</span>
                                 </p>
                                 {% if rev.tags|length %}
                                     {% for tag in rev.tags %}
@@ -118,8 +124,8 @@
                         </div>
                     {% endfor %}
                 </div>
-            </div>
-        {% endif %}
+            {% endif %}
+        </div>
     </div>
 
 {% endblock %}
