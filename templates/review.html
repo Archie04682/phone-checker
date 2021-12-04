@@ -1,0 +1,29 @@
+<div class="card mb-3">
+    <div class="card-header">
+        <h5 class="card-title mt-1">
+            {{ rev.title }}
+            {% if rev.rating == 0.0 %}
+                <span class="badge rounded-pill bg-secondary">{{ "%.1f"|format(rev.rating|float) }}</span>
+            {% elif rev.rating >= 4.0 %}
+                <span class="badge rounded-pill bg-success">{{ "%.1f"|format(rev.rating|float) }}</span>
+            {% elif rev.rating >= 3.0 %}
+                <span class="badge rounded-pill bg-warning">{{ "%.1f"|format(rev.rating|float) }}</span>
+            {% else %}
+                <span class="badge rounded-pill bg-danger">{{ "%.1f"|format(rev.rating|float) }}</span>
+            {% endif %}
+        </h5>
+    </div>
+    <div class="card-body">
+        {% if rev.body %}
+            <p class="card-text">{{ rev.body }}</p>
+        {% endif %}
+        <p class="card-bottom-line">
+            <span class="card-subtitle mb-2 text-muted h6">{{ rev.author }}, {{ rev.publish_date.strftime('%d.%m.%Y') }}</span>
+        </p>
+        {% if rev.tags|length %}
+            {% for tag in rev.tags %}
+                <span class="badge rounded-pill bg-primary">{{ tag }}</span>
+            {% endfor %}
+        {% endif %}
+    </div>
+</div>
