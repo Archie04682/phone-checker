@@ -50,10 +50,12 @@
         </div>
 
         {# Актуальные отзывы #}
-        <div class="row">
+        <div class="row row-centered">
             {% if phoneNumber.actual_reviews|length > 0 %}
-                <div class="col-lg-6 p-4">
+                <div class="col-lg-8 mx-auto text-center">
                     <p class="h5">Отзывы:</p>
+                </div>
+                <div class="col-lg-8 p-4 mx-auto">
                     {% for review in phoneNumber.actual_reviews %}
                         {% with rev = review %}
                             {% include "review.html" %}
@@ -61,19 +63,30 @@
                     {% endfor %}
                 </div>
             {% endif %}
-
-            {# Старые отзывы #}
-            {% if phoneNumber.old_reviews|length > 0 %}
-                <div class="col-lg-6 p-4">
-                    <p class="h5">Неактуальные отзывы:</p>
-                    {% for review in phoneNumber.old_reviews %}
-                        {% with rev = review %}
-                            {% include "review.html" %}
-                        {% endwith %}
-                    {% endfor %}
-                </div>
-            {% endif %}
         </div>
+
+        {# Старые отзывы #}
+        {% if phoneNumber.old_reviews|length > 0 %}
+            <div class="row text-center">
+                <div class="col pb-4 mx-auto">
+                    <button class="btn btn-secondary" type="button" data-bs-toggle="collapse"
+                            data-bs-target="#oldReviewsCollapse" aria-expanded="false" aria-controls="collapseExample">
+                        Неактуальные отзывы
+                    </button>
+                </div>
+            </div>
+            <div class="row row-centered">
+                <div class="collapse" id="oldReviewsCollapse">
+                    <div class="col-lg-8 p-4 mx-auto">
+                        {% for review in phoneNumber.old_reviews %}
+                            {% with rev = review %}
+                                {% include "review.html" %}
+                            {% endwith %}
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        {% endif %}
     </div>
 
 {% endblock %}
