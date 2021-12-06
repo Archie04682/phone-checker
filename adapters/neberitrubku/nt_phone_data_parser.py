@@ -84,56 +84,66 @@ class NTPhoneDataParser:
             raise InvalidDocumentStructureError(soup.text)
 
         reviews = []
+        last_seen_review_publish_date = None
 
         for review_raw in reviews_raw:
-
-            if rating_found := review_raw.find("meta", {"itemprop": "ratingValue"}):
-                rating = int(rating_found.attrs["content"])
-            else:
-                raise InvalidDocumentStructureError(soup.text)
-
-            tags = [tag.text.strip() for tag in review_raw.find_all(class_="reviewTag")]
-
-            publish_date_found = review_raw.find("time", {"itemprop": "datePublished"})
-            if publish_date_found:
-                publish_date = datetime.fromisoformat(publish_date_found.attrs["datetime"]).date()
-                publish_date_is_precise = True
-            else:
-                publish_date_is_precise = False
-                review_time_found = review_raw.find("span", class_="review_time")
-                if review_time_found:
-                    publish_date = NTPhoneDataParser._weeks_str_to_datetime(review_time_found.text.strip())
+            try:
+                if rating_found := review_raw.find("meta", {"itemprop": "ratingValue"}):
+                    rating = int(rating_found.attrs["content"])
                 else:
                     raise InvalidDocumentStructureError(soup.text)
 
-            if author_found := review_raw.find("span", {"itemprop": "author"}):
-                author = author_found.text.strip()
-                if author == "НБТ Пользователь":
+                tags = [tag.text.strip() for tag in review_raw.find_all(class_="reviewTag")]
+
+                publish_date_found = review_raw.find("time", {"itemprop": "datePublished"})
+                if publish_date_found:
+                    publish_date = datetime.fromisoformat(publish_date_found.attrs["datetime"]).date()
+                    publish_date_is_precise = True
+                else:
+                    publish_date_is_precise = False
+                    review_time_found = review_raw.find("span", class_="review_time")
+                    if review_time_found:
+                        publish_date = NTPhoneDataParser._weeks_str_to_datetime(review_time_found.text.strip())
+                    else:
+                        if last_seen_review_publish_date:
+                            publish_date = last_seen_review_publish_date
+                        else:
+                            continue
+                        # raise InvalidDocumentStructureError(soup.text)
+                last_seen_review_publish_date = publish_date
+
+                if author_found := review_raw.find("span", {"itemprop": "author"}):
+                    author = author_found.text.strip()
+                    if author == "НБТ Пользователь":
+                        author = "Анонимно"
+                else:
                     author = "Анонимно"
-            else:
-                raise InvalidDocumentStructureError(soup.text)
 
-            if title_found := review_raw.find("span", {"itemprop": "name"}):
-                title = title_found.text.strip()
-            else:
-                raise InvalidDocumentStructureError(soup.text)
+                if title_found := review_raw.find("span", {"itemprop": "name"}):
+                    title = title_found.text.strip()
+                else:
+                    title = "Без заголовка"
 
-            if body_found := review_raw.find("span", class_="review_comment"):
-                body = body_found.text.strip()
-            else:
-                raise InvalidDocumentStructureError(soup.text)
+                if body_found := review_raw.find("span", class_="review_comment"):
+                    body = body_found.text.strip()
+                else:
+                    raise InvalidDocumentStructureError(soup.text)
 
-            reviews.append(
-                NumberReview(
-                    rating,
-                    tags,
-                    publish_date,
-                    publish_date_is_precise,
-                    author,
-                    title,
-                    body
+            except InvalidDocumentStructureError:
+                logging.warning(f"Skipped review due to invalid structure: {review_raw.text}")
+
+            else:
+                reviews.append(
+                    NumberReview(
+                        rating,
+                        tags,
+                        publish_date,
+                        publish_date_is_precise,
+                        author,
+                        title,
+                        body
+                    )
                 )
-            )
 
         return reviews
 
