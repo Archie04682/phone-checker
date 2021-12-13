@@ -1,10 +1,54 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>404</title>
-</head>
-<body>
-404
-</body>
-</html>
+{% extends "base_template.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% block title %}
+    404: {{ phoneNumber }} - не удалось найти такой номер..
+{% endblock %}
+
+{% block content %}
+    <div class="container-fluid h-80">
+        <div class="row justify-content-center align-self-center not-found-block">
+            <div class="col-md-5 text-center text-white align-middle m-auto not-found-text">
+                <h1 class="display-1 mb-4">404</h1>
+                <p><span class="h6">{{ phoneNumber }}</span> - Кажется, такого номера не существует...</p>
+                <a class="btn btn-primary" href="/">Вернуться назад</a>
+            </div>
+            <div class="col-md-7 not-found-img text-left text-white"></div>
+        </div>
+    </div>
+
+{#    <div class="container">#}
+{#        <div class="row justify-content-center align-self-center">#}
+{#            I'm vertically centered#}
+{#        </div>#}
+{#    </div>#}
+
+    {#    <div class="row justify-content-center not-found-block">#}
+    {#        <div class="col-md-5 text-center text-white">#}
+    {#            <p class="h5">404</p>#}
+    {#        </div>#}
+    {#        <div class="col-md-7 not-found-img">#}
+    {##}
+    {#        </div>#}
+    {#        <div class="container position-relative">#}
+    {#            <div class="row justify-content-center">#}
+    {#                <div class="col-xl-6">#}
+    {#                    <div class="text-center text-white">#}
+    {#                        <!-- Page heading-->#}
+    {#                        <h1 class="mb-5">Введите номер телефона чтобы узнать его рейтинг и посмотреть отзывы:</h1>#}
+    {#                        <form method="POST" action="/" novalidate>#}
+    {#                            <div class="row">#}
+    {#                                <div class="col">#}
+    {#                                    COL#}
+    {#                                </div>#}
+    {#                                <div class="col-3">#}
+    {#                                    COL#}
+    {#                                </div>#}
+    {#                            </div>#}
+    {#                        </form>#}
+    {#                    </div>#}
+    {#                </div>#}
+    {#            </div>#}
+    {#        </div>#}
+    {#    </div>#}
+{% endblock %}

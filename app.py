@@ -76,7 +76,7 @@ def number(num: str):
     except InvalidDocumentStructureError as err:
         return render_template('server_error.html')
     except PhoneDataNotFoundError as err:
-        return render_template('not_found.html')
+        return render_template('not_found.html', phoneNumber=NumberNormalizeService.prettify(num))
 
     return render_template('number.html', phoneNumber=description)
 
@@ -104,6 +104,10 @@ def number_info(num: str):
     #     return jsonify(is_success=False, error_message=f"Failed To Process Request: unknown reason"), 500
 
     return jsonify(is_success=True, number_description=description.as_dict())
+
+
+def run_prod():
+    app.run()
 
 
 if __name__ == '__main__':
