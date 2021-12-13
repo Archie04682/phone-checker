@@ -137,14 +137,14 @@
     {#</section>#}
     <!-- Call to Action-->
     <section class="call-to-action text-white text-center" id="signup">
-        <div class="container position-relative">
+        <div class="container-fluid position-relative">
             <div class="row justify-content-center">
-                <div class="col-xl-6">
+                <div class="col-md-6 col-sm-8 col-10">
                     <h2 class="mb-4">Оставьте свой email, чтобы быстрее узнавать о новых возможностях API:</h2>
                     <form method="POST" action="/" novalidate>
                         {{ emailForm.csrf_token }}
                         <div class="row">
-                            <div class="col">
+                            <div class="col-md-9 col-sm-8 col-9 mb-2 mt-2 m-auto">
                                 {{ emailForm.email(class_="form-control") }}
                                 {% if emailForm.email.errors %}
                                     <ul class="errors">
@@ -154,7 +154,7 @@
                                     </ul>
                                 {% endif %}
                             </div>
-                            <div class="col-3">
+                            <div class="col-md-3 col-sm-4 col-12 mb-2 mt-2">
                                 {{ emailForm.submit(class_="btn btn-primary btn-block") }}
                             </div>
                         </div>
