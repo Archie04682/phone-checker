@@ -1,4 +1,5 @@
-from flask import Flask, jsonify, render_template, redirect, url_for, request
+from flask import Flask, jsonify, render_template, redirect, url_for
+from flask_login import login_required
 from datetime import timedelta
 from flask_wtf import FlaskForm
 from wtforms import StringField, EmailField, SubmitField
@@ -11,11 +12,15 @@ from adapters.neberitrubku.nt_phone_data_source import NTPhoneDataSource
 from services.number_description_service import NumberDescriptionService
 from services.pg.pg_number_cache_service import get_pg_cache_service
 from services.logger_provider import get_logger
+from services.authorization_service import init_app_auth
 
 app = Flask(__name__)
 app.config['JSON_AS_ASCII'] = False
 app.secret_key = environ.get('FLASK_SECRET_KEY')
 Bootstrap(app)
+
+# Flask-Login setup
+init_app_auth(app)
 
 # Manual DI =)
 cache_service = get_pg_cache_service(app, timedelta(weeks=2))
@@ -90,6 +95,7 @@ def subscribe(email: str):
 
 
 @app.route('/api/number/<string:num>')
+@login_required
 def number_info(num: str):
     try:
         normalized_number = NumberNormalizeService.normalize(num)
