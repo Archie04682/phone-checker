@@ -1,8 +1,11 @@
 import os
+from datetime import timedelta
 
+# Phone Info endpoint settings:
+NTRUBKU_HOST = "https://www.neberitrubku.ru/nomer-telefona"
 
-
-
+# Cache settings:
+ACTUALITY_DELTA = timedelta(days=7)
 
 # def get_postgres_uri():
 #     host = os.environ.get("DB_HOST", "localhost")
