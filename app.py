@@ -8,7 +8,7 @@ from flask_bootstrap import Bootstrap
 from os import environ
 
 from adapters.exceptions import InvalidDocumentStructureError, PhoneDataNotFoundError
-from adapters.neberitrubku.nt_phone_data_source import NTPhoneDataSource
+from adapters.neberitrubku.nt_phone_data_repository import NTPhoneDataSource
 from services.number_description_service import NumberDescriptionService
 from services.pg.pg_number_cache_service import get_pg_cache_service
 from services.logger_provider import get_logger

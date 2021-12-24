@@ -3,7 +3,7 @@ import logging
 from bs4 import BeautifulSoup
 from typing import Optional
 
-from adapters.phone_data_source import PhoneDataSource
+from adapters.repository import AbstractPhoneDataRepository
 from adapters.neberitrubku.nt_phone_data_parser import NTPhoneDataParser
 from adapters.exceptions import InvalidDocumentStructureError, PhoneDataNotFoundError
 
@@ -13,7 +13,7 @@ from domain.number import TelephoneNumber
 NTRUBKU_HOST = "https://www.neberitrubku.ru/nomer-telefona"
 
 
-class NTPhoneDataSource(PhoneDataSource):
+class NTPhoneDataSource(AbstractPhoneDataRepository):
     def __init__(self):
         self._parser = NTPhoneDataParser()
 

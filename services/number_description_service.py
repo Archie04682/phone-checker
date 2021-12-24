@@ -3,7 +3,7 @@ from logging import Logger
 from typing import Optional
 
 from domain.number import TelephoneNumber
-from adapters.phone_data_source import PhoneDataSource
+from adapters.repository import AbstractPhoneDataRepository
 from services.number_cache_service import NumberCacheService
 from services.number_normalize_service import NumberNormalizeService
 
@@ -11,7 +11,7 @@ from services.number_normalize_service import NumberNormalizeService
 class NumberDescriptionService:
     def __init__(self,
                  cache_service: NumberCacheService,
-                 phone_data_sources: [PhoneDataSource],
+                 phone_data_sources: [AbstractPhoneDataRepository],
                  logger: Logger = None):
         self._phone_data_sources = phone_data_sources
         self._cache = cache_service
