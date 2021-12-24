@@ -8,7 +8,7 @@ from adapters.neberitrubku.nt_phone_data_parser import NTPhoneDataParser
 from adapters.exceptions import InvalidDocumentStructureError, PhoneDataNotFoundError
 
 # TODO: Move settings to some file of something...
-from models.number import TelephoneNumber
+from domain.number import TelephoneNumber
 
 NTRUBKU_HOST = "https://www.neberitrubku.ru/nomer-telefona"
 

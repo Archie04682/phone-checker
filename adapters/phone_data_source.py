@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from models.number import TelephoneNumber
+from domain.number import TelephoneNumber
 
 
 class PhoneDataSource(ABC):

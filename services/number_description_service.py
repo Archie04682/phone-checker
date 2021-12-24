@@ -2,7 +2,7 @@ import logging
 from logging import Logger
 from typing import Optional
 
-from models.number import TelephoneNumber
+from domain.number import TelephoneNumber
 from adapters.phone_data_source import PhoneDataSource
 from services.number_cache_service import NumberCacheService
 from services.number_normalize_service import NumberNormalizeService

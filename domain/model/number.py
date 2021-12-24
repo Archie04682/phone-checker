@@ -1,6 +1,6 @@
 from datetime import date, timedelta
-from models.number_info import NumberInfo
-from models.number_review import NumberReview
+from domain.model.number_info import NumberInfo
+from domain.model.number_review import NumberReview
 
 
 class _Fields:

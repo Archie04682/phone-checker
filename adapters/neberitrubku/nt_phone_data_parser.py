@@ -3,9 +3,9 @@ from datetime import date, datetime, timedelta
 import logging
 
 from adapters.exceptions import InvalidDocumentStructureError
-from models.number_info import NumberInfo
-from models.number_review import NumberReview
-from models.number import TelephoneNumber
+from domain.number_info import NumberInfo
+from domain.number_review import NumberReview
+from domain.number import TelephoneNumber
 
 
 class NTPhoneDataParser:

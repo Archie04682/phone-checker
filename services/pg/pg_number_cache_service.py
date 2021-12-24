@@ -5,7 +5,7 @@ from datetime import datetime, timedelta
 from flask_sqlalchemy import SQLAlchemy
 from flask import Flask, jsonify
 
-from models.number import TelephoneNumber
+from domain.number import TelephoneNumber
 from services.number_cache_service import NumberCacheService
 
 

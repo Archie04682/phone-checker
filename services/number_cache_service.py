@@ -1,5 +1,5 @@
 import abc
-from models.number import TelephoneNumber
+from domain.number import TelephoneNumber
 
 
 class NumberCacheService(abc.ABC):
