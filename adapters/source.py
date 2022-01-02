@@ -6,7 +6,7 @@ from domain.model.phone_number import PhoneNumber
 
 class AbstractPhoneNumberEndpoint(ABC):
     @abstractmethod
-    def load_json(self, digits: str) -> {}:
+    def load_phone_number(self, digits: str) -> Optional[PhoneNumber]:
         raise NotImplementedError
 
 
@@ -22,9 +22,7 @@ class SingleEndpointPhoneNumberSource(AbstractPhoneNumberSource):
         self.endpoint = endpoint
 
     def get(self, digits: str) -> Optional[PhoneNumber]:
-        if phone_json := self.endpoint.load_json(digits):
-            return PhoneNumber.from_dict(phone_json)
-        return None
+        return self.endpoint.load_phone_number(digits)
 
 
 # TODO: There will be more complex multi-endpoint sources with sophisticated merging logic.

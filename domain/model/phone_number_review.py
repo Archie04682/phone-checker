@@ -1,4 +1,5 @@
 from datetime import date
+from dataclasses import dataclass
 
 # root: div.review
 #   rating: div.score meta(itemprop="ratingValue")
@@ -10,24 +11,32 @@ from datetime import date
 #   body: span.review_comment
 
 
+@dataclass(frozen=True)
+class ReviewTag:
+    value: str
+
+    def __repr__(self):
+        return self.value
+
+
 class PhoneNumberReview:
     def __init__(
             self,
             rating: float,
-            tags: [str],
+            tags: [ReviewTag],
             publish_date: date,
-            is_precise: bool,
             author: str,
             title: str,
-            body: str):
+            body: str,
+            source: str = ""):
 
         self.rating = rating
         self.tags = tags
         self.publish_date = publish_date
-        self.is_precise = is_precise
         self.author = author
         self.title = title
         self.body = body
+        self.source = source
 
     # To and From Dict conversions support:
 
@@ -35,32 +44,32 @@ class PhoneNumberReview:
         rating = "rating"
         tags = "tags"
         publish_date = "publish_date"
-        is_precise = "is_precise"
         author = "author"
         title = "title"
         body = "body"
+        source = "source"
 
     def as_dict(self) -> {}:
         return {
             PhoneNumberReview.__Fields.rating: self.rating,
-            PhoneNumberReview.__Fields.tags: self.tags,
+            PhoneNumberReview.__Fields.tags: [str(tag) for tag in self.tags],
             PhoneNumberReview.__Fields.publish_date: self.publish_date.isoformat(),
-            PhoneNumberReview.__Fields.is_precise: self.is_precise,
             PhoneNumberReview.__Fields.author: self.author,
             PhoneNumberReview.__Fields.title: self.title,
-            PhoneNumberReview.__Fields.body: self.body
+            PhoneNumberReview.__Fields.body: self.body,
+            PhoneNumberReview.__Fields.source: self.source
         }
 
     @staticmethod
     def from_dict(dictionary: {}):
         return PhoneNumberReview(
             rating=dictionary[PhoneNumberReview.__Fields.rating],
-            tags=dictionary[PhoneNumberReview.__Fields.tags],
+            tags=[ReviewTag(tag_str) for tag_str in dictionary[PhoneNumberReview.__Fields.tags]],
             publish_date=date.fromisoformat(dictionary[PhoneNumberReview.__Fields.publish_date]),
-            is_precise=dictionary[PhoneNumberReview.__Fields.is_precise],
             author=dictionary[PhoneNumberReview.__Fields.author],
             title=dictionary[PhoneNumberReview.__Fields.title],
-            body=dictionary[PhoneNumberReview.__Fields.body]
+            body=dictionary[PhoneNumberReview.__Fields.body],
+            source=dictionary[PhoneNumberReview.__Fields.source]
         )
 
 

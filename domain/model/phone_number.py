@@ -1,21 +1,32 @@
 from datetime import date, timedelta
 from typing import Optional
+from dataclasses import dataclass
 
 from domain.model.phone_number_review import PhoneNumberReview
+
+
+@dataclass(frozen=True)
+class NumberCategory:
+    value: str
+
+    def __repr__(self):
+        return self.value
 
 
 class PhoneNumber:
     def __init__(self,
                  rating: float,
                  digits: str,
-                 categories: [str],
+                 categories: [NumberCategory],
                  description: Optional[str],
-                 reviews: [PhoneNumberReview]):
+                 reviews: [PhoneNumberReview],
+                 timestamp: date = date.today()):
         self.rating = rating
         self.digits = digits
         self.categories = categories
         self.description = description
         self.reviews = reviews
+        self.timestamp = timestamp
 
     @property
     def ref(self):
@@ -47,14 +58,16 @@ class PhoneNumber:
         categories = "categories"
         description = "description"
         reviews = "reviews"
+        timestamp = "timestamp"
 
     def as_dict(self):
         return {
             PhoneNumber.__Fields.rating: self.rating,
             PhoneNumber.__Fields.digits: self.digits,
-            PhoneNumber.__Fields.categories: self.categories,
+            PhoneNumber.__Fields.categories: [str(cat) for cat in self.categories],
             PhoneNumber.__Fields.description: self.description,
-            PhoneNumber.__Fields.reviews: [review.as_dict() for review in self.reviews]
+            PhoneNumber.__Fields.reviews: [review.as_dict() for review in self.reviews],
+            PhoneNumber.__Fields.timestamp: self.timestamp.isoformat()
         }
 
     @staticmethod
@@ -62,7 +75,8 @@ class PhoneNumber:
         return PhoneNumber(
             rating=dictionary[PhoneNumber.__Fields.rating],
             digits=dictionary[PhoneNumber.__Fields.digits],
-            categories=dictionary[PhoneNumber.__Fields.categories],
+            categories=[NumberCategory(cat_str) for cat_str in dictionary[PhoneNumber.__Fields.categories]],
             description=dictionary[PhoneNumber.__Fields.description],
-            reviews=[PhoneNumberReview.from_dict(nr_dict) for nr_dict in dictionary[PhoneNumber.__Fields.reviews]]
+            reviews=[PhoneNumberReview.from_dict(nr_dict) for nr_dict in dictionary[PhoneNumber.__Fields.reviews]],
+            timestamp=date.fromisoformat(dictionary[PhoneNumber.__Fields.timestamp])
         )

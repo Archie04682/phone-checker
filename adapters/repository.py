@@ -1,5 +1,9 @@
 from abc import ABC, abstractmethod
+from typing import Optional
+
 from domain.model.phone_number import PhoneNumber
+from adapters.cache import AbstractPhoneDataCache
+from adapters.source import AbstractPhoneNumberSource
 
 
 class InvalidDocumentStructureError(Exception):
@@ -29,3 +33,16 @@ class AbstractPhoneNumberRepository(ABC):
     @abstractmethod
     def set(self, phone_number: PhoneNumber):
         raise NotImplementedError
+
+
+class PhoneNumberRepository(AbstractPhoneNumberRepository):
+
+    def __init__(self, source: AbstractPhoneNumberSource, cache: Optional[AbstractPhoneDataCache]):
+        self.source = source
+        self.cache = cache
+
+    def get(self, ref: str) -> PhoneNumber or None:
+        pass
+
+    def set(self, phone_number: PhoneNumber):
+        pass
