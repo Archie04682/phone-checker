@@ -154,7 +154,7 @@ class _NTPhoneDataParse:
         )
 
 
-class NTPhoneDataSource(AbstractPhoneNumberEndpoint):
+class NTPhoneNumberEndpoint(AbstractPhoneNumberEndpoint):
     heads = {
         'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,'
                   '*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
