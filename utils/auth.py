@@ -12,7 +12,7 @@ class AppUser(UserMixin):
 app_key = os.environ.get("MOBILE_API_KEY", "dummy-api-key")
 
 
-def get_user_by_api_key(key: str):
+def _get_user_by_api_key(key: str):
     if key == app_key:
         return AppUser()
     return None
@@ -22,7 +22,7 @@ def get_user_by_api_key(key: str):
 def load_user_from_request(req):
     api_key = req.args.get('api_key')
     if api_key:
-        user = get_user_by_api_key(api_key)
+        user = _get_user_by_api_key(api_key)
         if user:
             return user
 
@@ -33,7 +33,7 @@ def load_user_from_request(req):
             api_key = base64.b64decode(api_key)
         except TypeError:
             pass
-        user = get_user_by_api_key(api_key)
+        user = _get_user_by_api_key(api_key)
         if user:
             return user
 

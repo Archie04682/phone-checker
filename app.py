@@ -9,10 +9,10 @@ from os import environ
 
 from adapters.exceptions import InvalidDocumentStructureError, PhoneDataNotFoundError
 from adapters.endpoints.nt_phone_data_repository import NTPhoneDataSource
-from services.number_description_service import NumberDescriptionService
-from services.pg.pg_number_cache_service import get_pg_cache_service
-from services.logger_provider import get_logger
-from services.authorization_service import init_app_auth
+from utils.number_description_service import NumberDescriptionService
+from utils.pg.pg_number_cache_service import get_pg_cache_service
+from utils.log import get_logger
+from utils.auth import init_app_auth
 
 app = Flask(__name__)
 app.config['JSON_AS_ASCII'] = False
@@ -28,7 +28,7 @@ logger = get_logger()
 nd_service = NumberDescriptionService(cache_service, [NTPhoneDataSource()], logger)
 
 # WTForms
-from services.number_normalize_service import NumberNormalizeService
+from utils.number_formatter import NumberNormalizeService
 from phonenumbers import NumberParseException
 from wtforms import ValidationError
 
