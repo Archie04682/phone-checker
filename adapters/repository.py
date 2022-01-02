@@ -27,7 +27,7 @@ class PhoneDataNotFoundError(Exception):
 class AbstractPhoneNumberRepository(ABC):
 
     @abstractmethod
-    def get(self, digits: str) -> PhoneNumber or None:
+    def get(self, digits: str) -> Optional[PhoneNumber]:
         raise NotImplementedError
 
     @abstractmethod
@@ -41,8 +41,13 @@ class PhoneNumberRepository(AbstractPhoneNumberRepository):
         self.source = source
         self.cache = cache
 
-    def get(self, digits: str) -> PhoneNumber or None:
-        pass
+    def get(self, digits: str) -> Optional[PhoneNumber]:
+        if cached := self.cache.get(digits):
+            return cached
+        elif loaded := self.source.get(digits):
+            return loaded
+        return None
 
     def set(self, phone_number: PhoneNumber):
-        pass
+        if self.cache:
+            self.cache.put(phone_number)
