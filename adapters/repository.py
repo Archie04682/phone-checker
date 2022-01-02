@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import Optional
 
-from domain.model.phone_number import PhoneNumber
+from domain.model import PhoneNumber
 from adapters.cache import AbstractPhoneDataCache
 from adapters.source import AbstractPhoneNumberSource
 

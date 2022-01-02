@@ -3,7 +3,7 @@ from typing import Optional
 from datetime import timedelta, datetime
 # from sqlalchemy.orm import Session
 
-from domain.model.phone_number import PhoneNumber
+from domain.model import PhoneNumber
 
 
 class AbstractPhoneDataCache(ABC):

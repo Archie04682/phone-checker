@@ -1,8 +1,8 @@
 from sqlalchemy import Table, Column, DateTime, String, JSON, Integer, Float, ForeignKey
 from sqlalchemy.orm import registry, relationship
 
-from domain.model.phone_number import PhoneNumber, NumberCategory
-from domain.model.phone_number_review import PhoneNumberReview, ReviewTag
+from domain.model import PhoneNumber, NumberCategory
+from domain.model import PhoneNumberReview, ReviewTag
 
 
 mapper_registry = registry()
