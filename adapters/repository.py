@@ -11,8 +11,7 @@ class InvalidDocumentStructureError(Exception):
                  document_text: str,
                  message: str = "Invalid Document Structure."):
         self.document_text = document_text
-        self.message = message
-        super().__init__(self.message)
+        super().__init__(message)
 
 
 class PhoneDataNotFoundError(Exception):
@@ -20,8 +19,7 @@ class PhoneDataNotFoundError(Exception):
                  document_text: str,
                  message: str = "Number Info Not Found."):
         self.document_text = document_text
-        self.message = message
-        super().__init__(self.message)
+        super().__init__(message)
 
 
 class AbstractPhoneNumberRepository(ABC):

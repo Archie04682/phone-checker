@@ -8,8 +8,8 @@ from bs4 import BeautifulSoup
 from config import NTRUBKU_HOST
 from adapters.source import AbstractPhoneNumberEndpoint
 from adapters.repository import InvalidDocumentStructureError, PhoneDataNotFoundError
-from domain.model.phone_number import PhoneNumber
-from domain.model.phone_number_review import PhoneNumberReview, ReviewTag
+from domain.model import PhoneNumber
+from domain.model import PhoneNumberReview, ReviewTag
 
 
 class _NTPhoneDataParse:
@@ -172,8 +172,11 @@ class NTPhoneNumberEndpoint(AbstractPhoneNumberEndpoint):
                       'Chrome/96.0.4664.45 Safari/537.36 '
     }
 
+    def __init__(self, host: str = NTRUBKU_HOST):
+        self.__host = host
+
     def load_phone_number(self, digits: str) -> Optional[PhoneNumber]:
-        with get(f"{NTRUBKU_HOST}/{digits}", headers=self.heads) as response:
+        with get(f"{self.__host}/{digits}", headers=self.heads) as response:
             if response.status_code == 404:
                 raise PhoneDataNotFoundError(response.text)
 
@@ -185,9 +188,9 @@ class NTPhoneNumberEndpoint(AbstractPhoneNumberEndpoint):
                 parsing_result = _NTPhoneDataParse.parse_phone_number(soup)
             except InvalidDocumentStructureError:
                 error(f"Failed to parse response "
-                      f"for request to {NTRUBKU_HOST}/{digits}.")
+                      f"for request to {self.__host}/{digits}.")
                 return None
 
-            info(f"Request to {NTRUBKU_HOST}/{digits} "
+            info(f"Request to {self.__host}/{digits} "
                  f"loaded and parsed successfully.")
             return parsing_result

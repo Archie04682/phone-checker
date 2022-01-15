@@ -9,7 +9,7 @@ from domain.model import PhoneNumber
 class AbstractPhoneDataCache(ABC):
 
     @abstractmethod
-    def put(self, digits: str, number: PhoneNumber):
+    def put(self, number: PhoneNumber):
         raise NotImplementedError
 
     @abstractmethod
@@ -23,7 +23,7 @@ class PersistentPhoneDataCache(AbstractPhoneDataCache):
         self.session = session
         self.__actuality_delta = actuality_delta
 
-    def put(self, digits: str, number: PhoneNumber):
+    def put(self, number: PhoneNumber):
         self.session.add(number)
 
     def get(self, digits: str) -> Optional[PhoneNumber]:
