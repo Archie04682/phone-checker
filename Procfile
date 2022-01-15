@@ -1,1 +1,1 @@
-web: gunicorn app:app
+web: gunicorn entrypoints.flask.app:app
