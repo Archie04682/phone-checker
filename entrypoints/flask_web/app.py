@@ -13,9 +13,8 @@ from adapters import orm
 
 # Setting up Flask App:
 app = Flask(__name__,
-            template_folder=os.path.abspath('./templates'),
-            static_folder=os.path.abspath('./static'))
-
+            template_folder=os.path.join(os.path.dirname(__file__), 'templates'),
+            static_folder=os.path.join(os.path.dirname(__file__), 'static'))
 app.config['JSON_AS_ASCII'] = False
 app.secret_key = os.environ.get('FLASK_SECRET_KEY')
 Bootstrap(app)

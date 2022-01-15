@@ -1,8 +1,9 @@
-from sqlalchemy import Table, Column, DateTime, String, JSON, Integer, Float, ForeignKey
+from sqlalchemy import Table, Column, DateTime, String, JSON, Integer, Float, ForeignKey, create_engine
 from sqlalchemy.orm import registry, relationship
 
 from domain.model import PhoneNumber, NumberCategory
 from domain.model import PhoneNumberReview, ReviewTag
+from config import get_postgres_uri
 
 
 mapper_registry = registry()
@@ -67,3 +68,8 @@ def start_mappers():
             "reviews": relationship(PhoneNumberReview)
         }
     )
+
+
+def create_tables(engine):
+    engine = create_engine(get_postgres_uri())
+    mapper_registry.metadata.create_all(engine)

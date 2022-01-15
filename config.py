@@ -15,11 +15,8 @@ LOG_LEVEL = logging.INFO
 
 
 def get_postgres_uri():
-    host = os.environ.get("DB_HOST", "localhost")
-    port = 54321 if host == "localhost" else 5432
-    password = os.environ.get("DB_PASSWORD", "abc123")
-    user, db_name = "allocation", "allocation"
-    return f"postgresql://{user}:{password}@{host}:{port}/{db_name}"
+    localhost_db_string = f"postgresql://postgres:qwerty@localhost:5432/phones"
+    return os.environ.get("PG_DATABASE_URL", localhost_db_string)
 
 
 # def get_api_url():
