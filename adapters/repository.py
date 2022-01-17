@@ -43,6 +43,7 @@ class PhoneNumberRepository(AbstractPhoneNumberRepository):
         if cached := self.cache.get(digits):
             return cached
         elif loaded := self.source.get(digits):
+            self.set(loaded)
             return loaded
         return None
 

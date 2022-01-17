@@ -79,6 +79,9 @@ def number_info(num: str):
     return jsonify(is_success=True, number_description=requested_num)
 
 
+# orm.create_tables()
+
+
 if __name__ == '__main__':
     logger.info("Service started!")
     app.run(debug=True)

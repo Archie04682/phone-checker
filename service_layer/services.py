@@ -8,6 +8,7 @@ def get_number(digits: str, uow: AbstractUnitOfWork) -> Optional[dict]:
     with uow:
         formatted_digits = NumberFormatter.format(digits)
         if number := uow.numbers.get(formatted_digits):
+            uow.commit()
             return number.as_dict()
         else:
             return None

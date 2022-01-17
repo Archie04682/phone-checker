@@ -10,6 +10,7 @@ from adapters.source import AbstractPhoneNumberEndpoint
 from adapters.repository import InvalidDocumentStructureError, PhoneDataNotFoundError
 from domain.model import PhoneNumber, NumberCategory
 from domain.model import PhoneNumberReview, ReviewTag
+from utils import number_formatter
 
 
 class _NTPhoneDataParse:
@@ -123,7 +124,8 @@ class _NTPhoneDataParse:
             raise InvalidDocumentStructureError(soup.text)
 
         if digits_found := main_info_div.select_one("div.mainInfoHeader div.number"):
-            digits = digits_found.find(text=True, recursive=False).text.strip()
+            digits = number_formatter.NumberFormatter.format(
+                digits_found.find(text=True, recursive=False).text.strip())
         else:
             raise InvalidDocumentStructureError(soup.text)
 
@@ -186,6 +188,10 @@ class NTPhoneNumberEndpoint(AbstractPhoneNumberEndpoint):
             except InvalidDocumentStructureError:
                 error(f"Failed to parse response "
                       f"for request to {self.__host}/{digits}.")
+                return None
+
+            if parsing_result.digits != digits:
+                warning(f"Failed to load number info - request/response digits mismatch.")
                 return None
 
             info(f"Request to {self.__host}/{digits} "

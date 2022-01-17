@@ -41,9 +41,10 @@ phone_numbers = Table(
     "phone_numbers",
     mapper_registry.metadata,
     Column("id", Integer, primary_key=True, autoincrement=True),
-    Column("timestamp", DateTime, nullable=False),
+    Column("rating", Float, nullable=False),
     Column("digits", String(100), nullable=False),
-    Column("details", JSON, nullable=False)
+    Column("description", String),
+    Column("timestamp", DateTime, nullable=False)
 )
 
 
@@ -70,6 +71,6 @@ def start_mappers():
     )
 
 
-def create_tables(engine):
+def create_tables():
     engine = create_engine(get_postgres_uri())
     mapper_registry.metadata.create_all(engine)

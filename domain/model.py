@@ -1,4 +1,5 @@
 from datetime import date, timedelta
+from dateutil import parser
 from typing import Optional
 from dataclasses import dataclass
 
@@ -66,7 +67,7 @@ class PhoneNumberReview:
         return PhoneNumberReview(
             rating=dictionary[PhoneNumberReview.__Fields.rating],
             tags=[ReviewTag(tag_str) for tag_str in dictionary[PhoneNumberReview.__Fields.tags]],
-            publish_date=date.fromisoformat(dictionary[PhoneNumberReview.__Fields.publish_date]),
+            publish_date=parser.parse(dictionary[PhoneNumberReview.__Fields.publish_date]).date(),
             author=dictionary[PhoneNumberReview.__Fields.author],
             title=dictionary[PhoneNumberReview.__Fields.title],
             body=dictionary[PhoneNumberReview.__Fields.body],
@@ -149,5 +150,5 @@ class PhoneNumber:
             categories=[NumberCategory(cat_str) for cat_str in dictionary[PhoneNumber.__Fields.categories]],
             description=dictionary[PhoneNumber.__Fields.description],
             reviews=[PhoneNumberReview.from_dict(nr_dict) for nr_dict in dictionary[PhoneNumber.__Fields.reviews]],
-            timestamp=date.fromisoformat(dictionary[PhoneNumber.__Fields.timestamp])
+            timestamp=parser.parse(dictionary[PhoneNumber.__Fields.timestamp]).date()
         )
