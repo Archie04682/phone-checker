@@ -1,9 +1,9 @@
 import phonenumbers
 
 
-class NumberNormalizeService:
+class NumberFormatter:
     @staticmethod
-    def normalize(number: str) -> str:
+    def format(number: str) -> str:
         num_obj = phonenumbers.parse(number, region="RU")
         return f"{num_obj.country_code}{num_obj.national_number}"
 

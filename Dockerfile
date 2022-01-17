@@ -1,5 +1,5 @@
 FROM python:latest
-MAINTAINER Sabu@gc.team
+MAINTAINER snowborodist@gmail.com
 
 WORKDIR /app
 COPY . .

@@ -1,7 +1,7 @@
 {% extends "base_template.html" %}
 
 {% block title %}
-    {{ phoneNumber.info.digits }} - Информация о номере
+    {{ phoneNumber.digits }} - Информация о номере
 {% endblock %}
 
 {% block content %}
@@ -11,29 +11,29 @@
             {# Номер и рейтинг #}
             <div class="col-lg-6 p-4">
                 <p class="h5">Номер:</p>
-                <p class="h1">{{ phoneNumber.info.digits }}
-                    {% if phoneNumber.overall_rating == 0.0 %}
-                        <span class="badge rounded-pill bg-secondary">{{ "%.1f"|format(phoneNumber.overall_rating|float) }}</span>
-                    {% elif phoneNumber.overall_rating >= 4.0 %}
-                        <span class="badge rounded-pill bg-success">{{ "%.1f"|format(phoneNumber.overall_rating|float) }}</span>
-                    {% elif phoneNumber.overall_rating >= 3.0 %}
-                        <span class="badge rounded-pill bg-warning">{{ "%.1f"|format(phoneNumber.overall_rating|float) }}</span>
+                <p class="h1">{{ phoneNumber.digits }}
+                    {% if phoneNumber.rating == 0.0 %}
+                        <span class="badge rounded-pill bg-secondary">{{ "%.1f"|format(phoneNumber.rating|float) }}</span>
+                    {% elif phoneNumber.rating >= 4.0 %}
+                        <span class="badge rounded-pill bg-success">{{ "%.1f"|format(phoneNumber.rating|float) }}</span>
+                    {% elif phoneNumber.rating >= 3.0 %}
+                        <span class="badge rounded-pill bg-warning">{{ "%.1f"|format(phoneNumber.rating|float) }}</span>
                     {% else %}
-                        <span class="badge rounded-pill bg-danger">{{ "%.1f"|format(phoneNumber.overall_rating|float) }}</span>
+                        <span class="badge rounded-pill bg-danger">{{ "%.1f"|format(phoneNumber.rating|float) }}</span>
                     {% endif %}
                 </p>
             </div>
 
             {# Информация о номере #}
             <div class="col-lg-6 p-4">
-                {% if phoneNumber.info.description|length %}
-                    <p>{{ phoneNumber.info.description }}</p>
+                {% if phoneNumber.description %}
+                    <p>{{ phoneNumber.description }}</p>
                 {% endif %}
 
-                {% if phoneNumber.info.categories|length %}
+                {% if phoneNumber.categories|length %}
                     <p class="h5">Категории:</p>
                     <p>
-                        {% for cat in phoneNumber.info.categories.values() %}
+                        {% for cat in phoneNumber.categories %}
                             <span class="badge rounded-pill bg-primary">{{ cat }}</span>
                         {% endfor %}
                     </p>
