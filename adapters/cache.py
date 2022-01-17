@@ -27,5 +27,5 @@ class PersistentPhoneDataCache(AbstractPhoneDataCache):
         self.session.add(number)
 
     def get(self, digits: str) -> Optional[PhoneNumber]:
-        found = self.session.query(PhoneNumber).filter_by(digits=digits).one()
+        found = self.session.query(PhoneNumber).filter_by(digits=digits).first()
         return found if found and self.__actuality_delta < datetime.now() - found.timestamp else None

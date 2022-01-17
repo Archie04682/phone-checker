@@ -76,7 +76,7 @@ class PhoneNumberReview:
     # There also might be folded commentaries, but it's not necessary for now.
 
 
-@dataclass(frozen=True)
+@dataclass
 class NumberCategory:
     value: str
 

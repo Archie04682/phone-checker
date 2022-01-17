@@ -9,6 +9,7 @@ from utils import auth, log
 from entrypoints.flask_web.forms import PhoneNumberForm, EmailForm
 from service_layer import services, unit_of_work
 from adapters import orm
+from domain.model import PhoneNumber
 
 
 # Setting up Flask App:
@@ -54,7 +55,7 @@ def number(num: str):
     )
     if not requested_num:
         return render_template('not_found.html', phoneNumber=num)
-    return render_template('number.html', phoneNumber=requested_num)
+    return render_template('number.html', phoneNumber=PhoneNumber.from_dict(requested_num))
 
 
 @app.route('/subscribe/<string:email>')

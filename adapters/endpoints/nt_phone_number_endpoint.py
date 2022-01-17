@@ -8,7 +8,7 @@ from bs4 import BeautifulSoup
 from config import NTRUBKU_HOST
 from adapters.source import AbstractPhoneNumberEndpoint
 from adapters.repository import InvalidDocumentStructureError, PhoneDataNotFoundError
-from domain.model import PhoneNumber
+from domain.model import PhoneNumber, NumberCategory
 from domain.model import PhoneNumberReview, ReviewTag
 
 
@@ -66,6 +66,7 @@ class _NTPhoneDataParse:
                 publish_date_found = review_raw.find("time", {"itemprop": "datePublished"})
                 if publish_date_found:
                     publish_date = datetime.fromisoformat(publish_date_found.attrs["datetime"]).date()
+                    last_seen_review_publish_date = publish_date
                 else:
                     review_time_found = review_raw.find("span", class_="review_time")
                     if review_time_found:
@@ -74,13 +75,8 @@ class _NTPhoneDataParse:
                         if last_seen_review_publish_date:
                             publish_date = last_seen_review_publish_date
                         else:
-                            info("Review has no publish date")
+                            info("Review has no publish date - skipping")
                             continue
-
-                if not last_seen_review_publish_date:
-                    info("Review has no previous publish date")
-                    raise InvalidDocumentStructureError(soup.text)
-                last_seen_review_publish_date = publish_date
 
                 if author_found := review_raw.find("span", {"itemprop": "author"}):
                     author = author_found.text.strip()
@@ -98,7 +94,8 @@ class _NTPhoneDataParse:
                     body = body_found.text.strip()
                 else:
                     warning("Review has no body")
-                    raise InvalidDocumentStructureError(soup.text)
+                    body = ""
+                    # raise InvalidDocumentStructureError(soup.text)
 
             except InvalidDocumentStructureError:
                 warning(f"Skipped review due to invalid structure: {review_raw.text}")
@@ -134,7 +131,7 @@ class _NTPhoneDataParse:
         ratings = {int(rating[0].strip()): rating[-1].strip() for rating in ratings_raw}
 
         categories_raw = [cat.text.split('x ') for cat in main_info_div.select("div.description div.categories li")]
-        categories = {cat[0].strip(): cat[-1].strip() for cat in categories_raw}
+        categories = [NumberCategory(cat_data[-1].strip()) for cat_data in categories_raw]
 
         if description_found := main_info_div.select_one("div.description div.advanced div"):
             description = description_found.text.strip()
