@@ -1,5 +1,4 @@
 Flask
-# Flask-SQLAlchemy~=2.5.1
 Beautifulsoup4
 requests
 phonenumbers
@@ -12,4 +11,3 @@ Flask-Login
 email-validator
 SQLAlchemy
 Werkzeug
-python-dateutil

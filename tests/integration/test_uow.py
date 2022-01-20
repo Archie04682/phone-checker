@@ -1,5 +1,4 @@
 import pytest
-from dateutil import parser
 
 from domain.model import PhoneNumber
 from tests.random_generators import random_phone_number
@@ -21,12 +20,6 @@ def get_phone_number(session, ref: str):
     # noinspection SqlNoDataSourceInspection
     if rows := session.execute("SELECT * FROM phone_numbers WHERE digits=:ref", {"ref": ref}):
         return rows.first()
-        # _, rating, digits, description, timestamp_str = rows.first()
-        # return PhoneNumber(
-        #     rating, digits,
-        #     [], description, [],
-        #     parser.parse(timestamp_str).date()
-        # )
     return None
 
 

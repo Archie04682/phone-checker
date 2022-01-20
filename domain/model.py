@@ -1,5 +1,4 @@
-from datetime import date, timedelta
-from dateutil import parser
+from datetime import date
 from typing import Optional
 from dataclasses import dataclass
 from config import REVIEW_ACTUALITY_DELTA
@@ -41,7 +40,7 @@ class PhoneNumberReview:
         return PhoneNumberReview(
             rating=dictionary["rating"],
             tags=[ReviewTag(tag_str) for tag_str in dictionary["tags"]],
-            publish_date=parser.parse(dictionary["publish_date"]).date(),
+            publish_date=date.fromisoformat(dictionary["publish_date"]),
             author=dictionary["author"],
             title=dictionary["title"],
             body=dictionary["body"],
@@ -128,5 +127,5 @@ class PhoneNumber:
             categories=[NumberCategory(cat_str) for cat_str in dictionary["categories"]],
             description=dictionary["description"],
             reviews=[PhoneNumberReview.from_dict(nr_dict) for nr_dict in dictionary["reviews"]],
-            timestamp=parser.parse(dictionary["timestamp"]).date()
+            timestamp=date.fromisoformat(dictionary["timestamp"])
         )
