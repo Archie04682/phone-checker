@@ -5,7 +5,7 @@ from dataclasses import dataclass
 from config import REVIEW_ACTUALITY_DELTA
 
 
-@dataclass(frozen=True, eq=True)
+@dataclass(eq=True)
 class ReviewTag:
     value: str
 

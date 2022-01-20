@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 from typing import Optional
-from datetime import timedelta, datetime
+from datetime import timedelta, date
 # from sqlalchemy.orm import Session
 
 from domain.model import PhoneNumber
@@ -28,4 +28,4 @@ class PostgresPhoneNumberRepository(AbstractPhoneNumberRepository):
 
     def get(self, digits: str) -> Optional[PhoneNumber]:
         found = self.session.query(PhoneNumber).filter_by(digits=digits).first()
-        return found if found and self.__actuality_delta >= datetime.now() - found.timestamp else None
+        return found if found and self.__actuality_delta >= date.today() - found.timestamp else None
