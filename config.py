@@ -5,13 +5,18 @@ import logging
 # Phone Info endpoint settings:
 NTRUBKU_HOST = "https://www.neberitrubku.ru/nomer-telefona"
 
-# Cache settings:
-ACTUALITY_DELTA = timedelta(days=7)
+# Actuality settings:
+REPOSITORY_ACTUALITY_DELTA = timedelta(days=7)
+REVIEW_ACTUALITY_DELTA = timedelta(days=30)
 
 # Logging settings:
 WRITE_LOG_TO_FILE = False
 LOG_FILENAME = "log.txt"
 LOG_LEVEL = logging.INFO
+
+# Auth settings:
+FLASK_SECRET_KEY = os.environ.get('FLASK_SECRET_KEY', "dummy-flask-key")
+MOBILE_API_KEY = os.environ.get("MOBILE_API_KEY", "dummy-api-key")
 
 
 def get_postgres_uri():
@@ -21,5 +26,5 @@ def get_postgres_uri():
 
 # def get_api_url():
 #     host = os.environ.get("API_HOST", "localhost")
-#     port = 5005 if host == "localhost" else 80
-#     return f"http://{host}:{port}"
+#     port = 5000 if host == "localhost" else 80
+#     return f"https://{host}:{port}"

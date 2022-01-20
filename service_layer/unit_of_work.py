@@ -4,13 +4,14 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.orm.session import Session
 
-import config
-from adapters import repository, source, cache
-from adapters.endpoints import nt_phone_number_endpoint as ep
+from config import REPOSITORY_ACTUALITY_DELTA, get_postgres_uri
+from adapters import data_source, gateway, repository
+from adapters.loaders import nt_phone_number_loader as ep
+from utils.http_provider import HttpProvider
 
 
 class AbstractUnitOfWork(ABC):
-    numbers: repository.AbstractPhoneNumberRepository
+    numbers: data_source.AbstractPhoneNumberDataSource
 
     def __enter__(self):
         return self
@@ -29,18 +30,19 @@ class AbstractUnitOfWork(ABC):
 
 DEFAULT_SESSION_FACTORY = sessionmaker(
     bind=create_engine(
-        config.get_postgres_uri()
+        get_postgres_uri(),
+        isolation_level="REPEATABLE READ"
     )
 )
 
 
-def phone_source_factory() -> source.AbstractPhoneNumberSource:
-    endpoint = ep.NTPhoneNumberEndpoint()
-    return source.SingleEndpointPhoneNumberSource(endpoint)
+def phone_gateway_factory() -> gateway.AbstractPhoneNumberGateway:
+    loader = ep.NTPhoneNumberLoader(HttpProvider())
+    return gateway.SingleEndpointPhoneNumberGateway(loader)
 
 
-def cache_factory(session: Session) -> cache.AbstractPhoneDataCache:
-    return cache.PersistentPhoneDataCache(session, config.ACTUALITY_DELTA)
+def phone_repository_factory(session: Session) -> repository.AbstractPhoneNumberRepository:
+    return repository.PostgresPhoneNumberRepository(session, REPOSITORY_ACTUALITY_DELTA)
 
 
 class SqlalchemyUnitOfWork(AbstractUnitOfWork):
@@ -49,9 +51,9 @@ class SqlalchemyUnitOfWork(AbstractUnitOfWork):
 
     def __enter__(self):
         self.session = self.session_factory()  # type: Session
-        self.numbers = repository.PhoneNumberRepository(
-            phone_source_factory(),
-            cache_factory(self.session))
+        self.numbers = data_source.PhoneNumberDataSource(
+            phone_gateway_factory(),
+            phone_repository_factory(self.session))
         return super().__enter__()
 
     def __exit__(self, *args):

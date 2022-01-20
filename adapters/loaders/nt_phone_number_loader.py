@@ -1,4 +1,3 @@
-from requests import get
 from logging import info, warning, error
 from typing import Optional
 from datetime import date, datetime, timedelta
@@ -6,11 +5,12 @@ from datetime import date, datetime, timedelta
 from bs4 import BeautifulSoup
 
 from config import NTRUBKU_HOST
-from adapters.source import AbstractPhoneNumberEndpoint
-from adapters.repository import InvalidDocumentStructureError, PhoneDataNotFoundError
+from adapters.gateway import AbstractPhoneNumberLoader
+from adapters.data_source import InvalidDocumentStructureError, PhoneDataNotFoundError
 from domain.model import PhoneNumber, NumberCategory
 from domain.model import PhoneNumberReview, ReviewTag
 from utils import number_formatter
+from utils import http_provider as http
 
 
 class _NTPhoneDataParse:
@@ -153,7 +153,7 @@ class _NTPhoneDataParse:
         )
 
 
-class NTPhoneNumberEndpoint(AbstractPhoneNumberEndpoint):
+class NTPhoneNumberLoader(AbstractPhoneNumberLoader):
     heads = {
         'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,'
                   '*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
@@ -171,19 +171,20 @@ class NTPhoneNumberEndpoint(AbstractPhoneNumberEndpoint):
                       'Chrome/96.0.4664.45 Safari/537.36 '
     }
 
-    def __init__(self, host: str = NTRUBKU_HOST):
+    def __init__(self, http_provider: http.AbstractHttpProvider, host: str = NTRUBKU_HOST):
+        self.__http_prov = http_provider
         self.__host = host
 
     def load_phone_number(self, digits: str) -> Optional[PhoneNumber]:
-        with get(f"{self.__host}/{digits}", headers=self.heads) as response:
+        with self.__http_prov.get(f"{self.__host}/{digits}", self.heads) as response:
             if response.status_code == 404:
-                raise PhoneDataNotFoundError(response.text)
+                raise PhoneDataNotFoundError(response.body)
 
             if response.status_code != 200:
                 return None
 
             try:
-                soup = BeautifulSoup(response.text, 'html.parser')
+                soup = BeautifulSoup(response.body, 'html.parser')
                 parsing_result = _NTPhoneDataParse.parse_phone_number(soup)
             except InvalidDocumentStructureError:
                 error(f"Failed to parse response "

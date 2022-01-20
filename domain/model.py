@@ -2,9 +2,10 @@ from datetime import date, timedelta
 from dateutil import parser
 from typing import Optional
 from dataclasses import dataclass
+from config import REVIEW_ACTUALITY_DELTA
 
 
-@dataclass(frozen=True)
+@dataclass(frozen=True, eq=True)
 class ReviewTag:
     value: str
 
@@ -12,72 +13,45 @@ class ReviewTag:
         return self.value
 
 
+@dataclass(eq=True)
 class PhoneNumberReview:
-    # root: div.review
-    #   rating: div.score meta(itemprop="ratingValue")
-    #   tags: div.rightFloat span.reviewTag
-    #   publish_date: div.rightFloat time(itemprop="datePublished", datetime="2017-05-07 12:45:42")
-    #   is_precise: div.rightFloat span.review_time.text (true if found)
-    #   author: h3 span.reviewer span(itemprop="author")
-    #   title: h3 span(itemprop="name")
-    #   body: span.review_comment
-
-    def __init__(
-            self,
-            rating: float,
-            tags: [ReviewTag],
-            publish_date: date,
-            author: str,
-            title: str,
-            body: str,
-            source: str = ""):
-
-        self.rating = rating
-        self.tags = tags
-        self.publish_date = publish_date
-        self.author = author
-        self.title = title
-        self.body = body
-        self.source = source
+    rating: float
+    tags: [ReviewTag]
+    publish_date: date
+    author: str
+    title: str
+    body: str
+    source: str = ""
 
     # To and From Dict conversions support:
 
-    class __Fields:
-        rating = "rating"
-        tags = "tags"
-        publish_date = "publish_date"
-        author = "author"
-        title = "title"
-        body = "body"
-        source = "source"
-
     def as_dict(self) -> {}:
         return {
-            PhoneNumberReview.__Fields.rating: self.rating,
-            PhoneNumberReview.__Fields.tags: [str(tag) for tag in self.tags],
-            PhoneNumberReview.__Fields.publish_date: self.publish_date.isoformat(),
-            PhoneNumberReview.__Fields.author: self.author,
-            PhoneNumberReview.__Fields.title: self.title,
-            PhoneNumberReview.__Fields.body: self.body,
-            PhoneNumberReview.__Fields.source: self.source
+            "rating": self.rating,
+            "tags": [str(tag) for tag in self.tags],
+            "publish_date": self.publish_date.isoformat(),
+            "author": self.author,
+            "title": self.title,
+            "body": self.body,
+            "source": self.source
         }
 
     @staticmethod
     def from_dict(dictionary: {}):
         return PhoneNumberReview(
-            rating=dictionary[PhoneNumberReview.__Fields.rating],
-            tags=[ReviewTag(tag_str) for tag_str in dictionary[PhoneNumberReview.__Fields.tags]],
-            publish_date=parser.parse(dictionary[PhoneNumberReview.__Fields.publish_date]).date(),
-            author=dictionary[PhoneNumberReview.__Fields.author],
-            title=dictionary[PhoneNumberReview.__Fields.title],
-            body=dictionary[PhoneNumberReview.__Fields.body],
-            source=dictionary[PhoneNumberReview.__Fields.source]
+            rating=dictionary["rating"],
+            tags=[ReviewTag(tag_str) for tag_str in dictionary["tags"]],
+            publish_date=parser.parse(dictionary["publish_date"]).date(),
+            author=dictionary["author"],
+            title=dictionary["title"],
+            body=dictionary["body"],
+            source=dictionary["source"]
         )
 
     # There also might be folded commentaries, but it's not necessary for now.
 
 
-@dataclass
+@dataclass(eq=True)
 class NumberCategory:
     value: str
 
@@ -85,6 +59,8 @@ class NumberCategory:
         return self.value
 
 
+# Aggregate Root
+# TODO: Add Versioning with implementing modifying functions (such as adding a review)
 class PhoneNumber:
     def __init__(self,
                  rating: float,
@@ -100,6 +76,16 @@ class PhoneNumber:
         self.reviews = reviews
         self.timestamp = timestamp
 
+    def __eq__(self, other):
+        if not isinstance(other, PhoneNumber):
+            return False
+        return (self.rating == other.rating
+                and self.digits == other.digits
+                and self.categories == other.categories
+                and self.description == other.description
+                and self.reviews == other.reviews
+                and self.timestamp == other.timestamp)
+
     @property
     def ref(self):
         return self.digits
@@ -111,44 +97,36 @@ class PhoneNumber:
     @property
     def actual_reviews(self) -> [PhoneNumberReview]:
         return list(filter(
-            lambda rev: (date.today() - rev.publish_date) < timedelta(days=30),
+            lambda rev: (date.today() - rev.publish_date) < REVIEW_ACTUALITY_DELTA,
             self.reviews
         ))
 
     @property
     def old_reviews(self) -> [PhoneNumberReview]:
         return list(filter(
-            lambda rev: (date.today() - rev.publish_date) >= timedelta(days=30),
+            lambda rev: (date.today() - rev.publish_date) >= REVIEW_ACTUALITY_DELTA,
             self.reviews
         ))
 
     # To and From Dict conversions support:
 
-    class __Fields:
-        rating = "rating"
-        digits = "digits"
-        categories = "categories"
-        description = "description"
-        reviews = "reviews"
-        timestamp = "timestamp"
-
     def as_dict(self):
         return {
-            PhoneNumber.__Fields.rating: self.rating,
-            PhoneNumber.__Fields.digits: self.digits,
-            PhoneNumber.__Fields.categories: [str(cat) for cat in self.categories],
-            PhoneNumber.__Fields.description: self.description,
-            PhoneNumber.__Fields.reviews: [review.as_dict() for review in self.reviews],
-            PhoneNumber.__Fields.timestamp: self.timestamp.isoformat()
+            "rating": self.rating,
+            "digits": self.digits,
+            "categories": [str(cat) for cat in self.categories],
+            "description": self.description,
+            "reviews": [review.as_dict() for review in self.reviews],
+            "timestamp": self.timestamp.isoformat()
         }
 
     @staticmethod
     def from_dict(dictionary: {}):
         return PhoneNumber(
-            rating=dictionary[PhoneNumber.__Fields.rating],
-            digits=dictionary[PhoneNumber.__Fields.digits],
-            categories=[NumberCategory(cat_str) for cat_str in dictionary[PhoneNumber.__Fields.categories]],
-            description=dictionary[PhoneNumber.__Fields.description],
-            reviews=[PhoneNumberReview.from_dict(nr_dict) for nr_dict in dictionary[PhoneNumber.__Fields.reviews]],
-            timestamp=parser.parse(dictionary[PhoneNumber.__Fields.timestamp]).date()
+            rating=dictionary["rating"],
+            digits=dictionary["digits"],
+            categories=[NumberCategory(cat_str) for cat_str in dictionary["categories"]],
+            description=dictionary["description"],
+            reviews=[PhoneNumberReview.from_dict(nr_dict) for nr_dict in dictionary["reviews"]],
+            timestamp=parser.parse(dictionary["timestamp"]).date()
         )

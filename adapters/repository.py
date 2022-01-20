@@ -1,52 +1,31 @@
 from abc import ABC, abstractmethod
 from typing import Optional
+from datetime import timedelta, datetime
+# from sqlalchemy.orm import Session
 
 from domain.model import PhoneNumber
-from adapters.cache import AbstractPhoneDataCache
-from adapters.source import AbstractPhoneNumberSource
-
-
-class InvalidDocumentStructureError(Exception):
-    def __init__(self,
-                 document_text: str,
-                 message: str = "Invalid Document Structure."):
-        self.document_text = document_text
-        super().__init__(message)
-
-
-class PhoneDataNotFoundError(Exception):
-    def __init__(self,
-                 document_text: str,
-                 message: str = "Number Info Not Found."):
-        self.document_text = document_text
-        super().__init__(message)
 
 
 class AbstractPhoneNumberRepository(ABC):
 
     @abstractmethod
-    def get(self, digits: str) -> Optional[PhoneNumber]:
+    def put(self, number: PhoneNumber):
         raise NotImplementedError
 
     @abstractmethod
-    def set(self, phone_number: PhoneNumber):
+    def get(self, digits: str) -> Optional[PhoneNumber]:
         raise NotImplementedError
 
 
-class PhoneNumberRepository(AbstractPhoneNumberRepository):
+class PostgresPhoneNumberRepository(AbstractPhoneNumberRepository):
 
-    def __init__(self, source: AbstractPhoneNumberSource, cache: Optional[AbstractPhoneDataCache]):
-        self.source = source
-        self.cache = cache
+    def __init__(self, session, actuality_delta: timedelta):
+        self.session = session
+        self.__actuality_delta = actuality_delta
+
+    def put(self, number: PhoneNumber):
+        self.session.add(number)
 
     def get(self, digits: str) -> Optional[PhoneNumber]:
-        if cached := self.cache.get(digits):
-            return cached
-        elif loaded := self.source.get(digits):
-            self.set(loaded)
-            return loaded
-        return None
-
-    def set(self, phone_number: PhoneNumber):
-        if self.cache:
-            self.cache.put(phone_number)
+        found = self.session.query(PhoneNumber).filter_by(digits=digits).first()
+        return found if found and self.__actuality_delta >= datetime.now() - found.timestamp else None
