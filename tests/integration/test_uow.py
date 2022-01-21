@@ -1,38 +1,20 @@
 import pytest
 
-from domain.model import PhoneNumber
+from tests.conftest import insert_phone_number, get_phone_number
 from tests.random_generators import random_phone_number
 from service_layer.unit_of_work import SqlalchemyUnitOfWork
-
-
-def insert_phone_number(session, number: PhoneNumber):
-    # noinspection SqlNoDataSourceInspection
-    session.execute(
-        "INSERT INTO phone_numbers (rating, digits, description, timestamp) "
-        "VALUES (:rating, :digits, :description, :timestamp)",
-        {"rating": number.rating,
-         "digits": number.digits,
-         "description": number.description,
-         "timestamp": number.timestamp})
-
-
-def get_phone_number(session, ref: str):
-    # noinspection SqlNoDataSourceInspection
-    if rows := session.execute("SELECT * FROM phone_numbers WHERE digits=:ref", {"ref": ref}):
-        return rows.first()
-    return None
 
 
 def test_can_save_phone_number(in_memory_session_factory):
     uow = SqlalchemyUnitOfWork(in_memory_session_factory)
     with uow:
         num_to_set, _ = random_phone_number()
-        set_ref = num_to_set.ref
+        num_to_set_ref = num_to_set.ref
         uow.numbers.set(num_to_set)
         uow.commit()
 
     session = in_memory_session_factory()
-    retrieved_num = get_phone_number(session, set_ref)
+    retrieved_num = get_phone_number(session, num_to_set_ref)
     assert retrieved_num is not None
 
 

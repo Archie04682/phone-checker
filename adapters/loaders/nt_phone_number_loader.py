@@ -154,7 +154,7 @@ class _NTPhoneDataParse:
 
 
 class NTPhoneNumberLoader(AbstractPhoneNumberLoader):
-    heads = {
+    _heads = {
         'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,'
                   '*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
         'accept-encoding': 'gzip, deflate, br',
@@ -176,7 +176,7 @@ class NTPhoneNumberLoader(AbstractPhoneNumberLoader):
         self.__host = host
 
     def load_phone_number(self, digits: str) -> Optional[PhoneNumber]:
-        with self.__http_prov.get(f"{self.__host}/{digits}", self.heads) as response:
+        with self.__http_prov.get(f"{self.__host}/{digits}", self._heads) as response:
             if response.status_code == 404:
                 raise PhoneDataNotFoundError(response.body)
 
