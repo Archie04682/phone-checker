@@ -1,6 +1,7 @@
 import base64
 import os
 from flask_login import LoginManager, UserMixin
+from config import MOBILE_API_KEY
 
 login_manager = LoginManager()
 
@@ -9,11 +10,8 @@ class AppUser(UserMixin):
     pass
 
 
-app_key = os.environ.get("MOBILE_API_KEY", "dummy-api-key")
-
-
 def _get_user_by_api_key(key: str):
-    if key == app_key:
+    if key == MOBILE_API_KEY:
         return AppUser()
     return None
 

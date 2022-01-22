@@ -1,4 +1,4 @@
-from sqlalchemy import Table, Column, DateTime, String, JSON, Integer, Float, ForeignKey, create_engine
+from sqlalchemy import Table, Column, Date, String, Integer, Float, ForeignKey, create_engine
 from sqlalchemy.orm import registry, relationship
 
 from domain.model import PhoneNumber, NumberCategory
@@ -22,7 +22,7 @@ reviews = Table(
     Column("id", Integer, primary_key=True, autoincrement=True),
     Column("number_id", Integer, ForeignKey("phone_numbers.id")),
     Column("rating", Float, nullable=False),
-    Column("publish_date", DateTime, nullable=False),
+    Column("publish_date", Date, nullable=False),
     Column("author", String, nullable=False),
     Column("title", String, nullable=False),
     Column("body", String, nullable=False),
@@ -44,7 +44,7 @@ phone_numbers = Table(
     Column("rating", Float, nullable=False),
     Column("digits", String(100), nullable=False),
     Column("description", String),
-    Column("timestamp", DateTime, nullable=False)
+    Column("timestamp", Date, nullable=False)
 )
 
 

@@ -10,6 +10,7 @@ from entrypoints.flask_web.forms import PhoneNumberForm, EmailForm
 from service_layer import services, unit_of_work
 from adapters import orm
 from domain.model import PhoneNumber
+from config import FLASK_SECRET_KEY
 
 
 # Setting up Flask App:
@@ -17,10 +18,11 @@ app = Flask(__name__,
             template_folder=os.path.join(os.path.dirname(__file__), 'templates'),
             static_folder=os.path.join(os.path.dirname(__file__), 'static'))
 app.config['JSON_AS_ASCII'] = False
-app.secret_key = os.environ.get('FLASK_SECRET_KEY')
+app.secret_key = FLASK_SECRET_KEY
 Bootstrap(app)
 auth.init_app_auth(app)
 orm.start_mappers()
+orm.create_tables()
 logger = log.get_logger()
 
 
@@ -83,5 +85,5 @@ def number_info(num: str):
 
 
 if __name__ == '__main__':
-    logger.info("Service started!")
+    logger.info("Flask Web Service started!")
     app.run(debug=True)
