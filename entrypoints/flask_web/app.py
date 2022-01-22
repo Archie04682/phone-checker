@@ -22,6 +22,7 @@ app.secret_key = FLASK_SECRET_KEY
 Bootstrap(app)
 auth.init_app_auth(app)
 orm.start_mappers()
+orm.create_tables()
 logger = log.get_logger()
 
 
@@ -84,5 +85,5 @@ def number_info(num: str):
 
 
 if __name__ == '__main__':
-    logger.info("Service started!")
+    logger.info("Flask Web Service started!")
     app.run(debug=True)

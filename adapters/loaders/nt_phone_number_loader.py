@@ -15,7 +15,7 @@ from utils import http_provider as http
 
 class _NTPhoneDataParse:
     @staticmethod
-    def _weeks_str_to_datetime(weeks_string) -> date:
+    def _weeks_str_to_date(weeks_string) -> date:
         weeks_str = weeks_string.split(" ", 1)[0].lower()
         if weeks_str == "один":
             weeks = 1
@@ -71,7 +71,7 @@ class _NTPhoneDataParse:
                 else:
                     review_time_found = review_raw.find("span", class_="review_time")
                     if review_time_found:
-                        publish_date = _NTPhoneDataParse._weeks_str_to_datetime(review_time_found.text.strip())
+                        publish_date = _NTPhoneDataParse._weeks_str_to_date(review_time_found.text.strip())
                     else:
                         if last_seen_review_publish_date:
                             publish_date = last_seen_review_publish_date
