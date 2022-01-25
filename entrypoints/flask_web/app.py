@@ -51,16 +51,14 @@ def index():
 
 @app.route('/number/<string:num>')
 def number(num: str):
-    requested_num = services.get_number(
-        digits=num,
-        uow=unit_of_work.SqlalchemyUnitOfWork()
-    )
-    if not requested_num:
+    try:
+        requested_num = services.get_number(digits=num, uow=unit_of_work.SqlalchemyUnitOfWork())
+    except services.FailedToLoadPhoneNumberError:
         return render_template('not_found.html', phoneNumber=num)
     return render_template('number.html', phoneNumber=PhoneNumber.from_dict(requested_num))
 
 
-@app.route('/subscribe/<string:email>')
+@app.route('/subscribe/<string:email>', methods=['POST'])
 def subscribe(email: str):
     email_form = EmailForm()
     if email_form.validate_on_submit():
@@ -72,16 +70,11 @@ def subscribe(email: str):
 @app.route('/api/number/<string:num>')
 @login_required
 def number_info(num: str):
-    requested_num = services.get_number(
-        digits=num,
-        uow=unit_of_work.SqlalchemyUnitOfWork()
-    )
-    if not requested_num:
+    try:
+        requested_num = services.get_number(digits=num, uow=unit_of_work.SqlalchemyUnitOfWork())
+    except services.FailedToLoadPhoneNumberError:
         return jsonify(is_success=False, error_message=f"Phone Info Not Found"), 404
     return jsonify(is_success=True, number_description=requested_num)
-
-
-# orm.create_tables()
 
 
 if __name__ == '__main__':
