@@ -4,6 +4,14 @@ from typing import Optional
 from domain.model import PhoneNumber
 
 
+class PhoneDataLoadingError(Exception):
+    def __init__(self,
+                 document_text: str,
+                 message: str = "Number Info Not Found."):
+        self.document_text = document_text
+        super().__init__(message)
+
+
 class AbstractPhoneNumberLoader(ABC):
     @abstractmethod
     def load_phone_number(self, digits: str) -> Optional[PhoneNumber]:

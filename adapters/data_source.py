@@ -6,20 +6,10 @@ from adapters.repository import AbstractPhoneNumberRepository
 from adapters.gateway import AbstractPhoneNumberGateway
 
 
-class InvalidDocumentStructureError(Exception):
-    def __init__(self,
-                 document_text: str,
-                 message: str = "Invalid Document Structure."):
-        self.document_text = document_text
-        super().__init__(message)
 
 
-class PhoneDataNotFoundError(Exception):
-    def __init__(self,
-                 document_text: str,
-                 message: str = "Number Info Not Found."):
-        self.document_text = document_text
-        super().__init__(message)
+
+
 
 
 class AbstractPhoneNumberDataSource(ABC):
