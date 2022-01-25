@@ -184,8 +184,8 @@ class NTPhoneNumberLoader(AbstractPhoneNumberLoader):
 
     def load_phone_number(self, digits: str) -> PhoneNumber:
         """
-        Loads PhoneNumber for the given digits.
-        @param digits: Str with phone number digits to load info for.
+        Load PhoneNumber for the given digits.
+        @param digits: str containing phone number digits to load info for.
         @return: PhoneNumber object containing info for the given digits.
         @raise: PhoneDataLoadingError if failed to load PhoneNumber for the given digits.
         """

@@ -1,5 +1,4 @@
 from abc import ABC, abstractmethod
-from typing import Optional
 
 from domain.model import PhoneNumber
 
@@ -14,13 +13,13 @@ class PhoneDataLoadingError(Exception):
 
 class AbstractPhoneNumberLoader(ABC):
     @abstractmethod
-    def load_phone_number(self, digits: str) -> Optional[PhoneNumber]:
+    def load_phone_number(self, digits: str) -> PhoneNumber:
         raise NotImplementedError
 
 
 class AbstractPhoneNumberGateway(ABC):
     @abstractmethod
-    def get(self, digits: str) -> Optional[PhoneNumber]:
+    def get(self, digits: str) -> PhoneNumber:
         raise NotImplementedError
 
 
@@ -29,7 +28,13 @@ class SingleEndpointPhoneNumberGateway(AbstractPhoneNumberGateway):
     def __init__(self, loader: AbstractPhoneNumberLoader):
         self.loader = loader
 
-    def get(self, digits: str) -> Optional[PhoneNumber]:
+    def get(self, digits: str) -> PhoneNumber:
+        """
+        Get PhoneNumber for the given digits.
+        @param digits: str containing phone number digits to load info for.
+        @return: PhoneNumber object containing info for the given digits.
+        @raise: PhoneDataLoadingError if failed to load PhoneNumber for the given digits.
+        """
         return self.loader.load_phone_number(digits)
 
 
