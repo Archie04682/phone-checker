@@ -20,4 +20,5 @@ def get_number(digits: str, uow: AbstractUnitOfWork) -> PhoneNumber:
         except CacheError:
             new_version = uow.number_gateway.get(formatted_digits)
             uow.number_cache.put(new_version)
+            uow.commit()
             return new_version
