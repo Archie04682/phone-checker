@@ -5,7 +5,7 @@ import adapters.gateway
 from domain.model import PhoneNumber
 from adapters.cache import AbstractPhoneNumberCache, PhoneNumberNotFoundError, PhoneNumberOutdatedError
 from adapters.gateway import AbstractPhoneNumberGateway, PhoneDataLoadingError
-from service_layer.services import get_number, AbstractUnitOfWork
+from service_layer.services import get_number, AbstractUnitOfWork, FailedToLoadPhoneNumberError
 from tests.random_generators import random_phone_number
 
 
@@ -93,7 +93,7 @@ def test_raises_if_fails_to_get_number():
     _, _, uow = prepare()
     not_existing_num, _ = random_phone_number()
 
-    with pytest.raises(adapters.gateway.PhoneDataLoadingError):
+    with pytest.raises(FailedToLoadPhoneNumberError):
         _ = get_number(not_existing_num.ref, uow)
 
 
@@ -109,7 +109,7 @@ def test_doesnt_commit_on_fail_while_updating_cache():
     _, _, uow = prepare()
     not_existing_num, _ = random_phone_number()
 
-    with pytest.raises(PhoneDataLoadingError):
+    with pytest.raises(FailedToLoadPhoneNumberError):
         _ = get_number(not_existing_num.ref, uow)
 
     assert not uow.committed
