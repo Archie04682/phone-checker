@@ -55,24 +55,27 @@ def test_parses_http_result_and_returns_phone_number():
 
 @pytest.mark.skip(reason="Not Implemented")
 def test_raises_on_404():
+    provider = FakeHttpProvider(fake_not_found_response)
+    loader = NTPhoneNumberLoader(provider)
+
     with pytest.raises(PhoneDataLoadingError):
-        provider = FakeHttpProvider(fake_not_found_response)
-        loader = NTPhoneNumberLoader(provider)
         _ = loader.load_phone_number(random_digits())
 
 
 @pytest.mark.skip(reason="Not Implemented")
 def test_raises_on_not_200():
+    provider = FakeHttpProvider(fake_internal_server_error_response)
+    loader = NTPhoneNumberLoader(provider)
+
     with pytest.raises(PhoneDataLoadingError):
-        provider = FakeHttpProvider(fake_internal_server_error_response)
-        loader = NTPhoneNumberLoader(provider)
         _ = loader.load_phone_number(random_digits())
 
 
 @pytest.mark.skip(reason="Not Implemented")
 def test_raises_on_digits_mismatch():
+    provider = FakeHttpProvider(fake_invalid_data_response)
+    loader = NTPhoneNumberLoader(provider)
+    digits = actual_phone_number.digits
+
     with pytest.raises(PhoneDataLoadingError):
-        provider = FakeHttpProvider(fake_invalid_data_response)
-        loader = NTPhoneNumberLoader(provider)
-        digits = actual_phone_number.digits
         _ = loader.load_phone_number(digits)
