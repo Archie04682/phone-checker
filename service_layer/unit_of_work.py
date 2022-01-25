@@ -41,8 +41,8 @@ def phone_gateway_factory() -> gateway.AbstractPhoneNumberGateway:
     return gateway.SingleEndpointPhoneNumberGateway(loader)
 
 
-def phone_repository_factory(session: Session) -> repository.AbstractPhoneNumberRepository:
-    return repository.PostgresPhoneNumberRepository(session, REPOSITORY_ACTUALITY_DELTA)
+def phone_cache_factory(session: Session) -> cache.AbstractPhoneNumberCache:
+    return cache.PgPhoneNumberPersistentCache(session, REPOSITORY_ACTUALITY_DELTA)
 
 
 class SqlalchemyUnitOfWork(AbstractUnitOfWork):
@@ -53,7 +53,7 @@ class SqlalchemyUnitOfWork(AbstractUnitOfWork):
         self.session = self.session_factory()  # type: Session
         self.numbers = data_source.PhoneNumberDataSource(
             phone_gateway_factory(),
-            phone_repository_factory(self.session))
+            phone_cache_factory(self.session))
         return super().__enter__()
 
     def __exit__(self, *args):
