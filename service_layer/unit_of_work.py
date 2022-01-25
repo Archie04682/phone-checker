@@ -5,7 +5,7 @@ from sqlalchemy.orm import sessionmaker
 from sqlalchemy.orm.session import Session
 
 from config import REPOSITORY_ACTUALITY_DELTA, get_postgres_uri
-from adapters import data_source, gateway, repository
+from adapters import data_source, gateway, cache
 from adapters.loaders import nt_phone_number_loader as ep
 from utils.http_provider import HttpProvider
 

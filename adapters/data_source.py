@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 from typing import Optional
 
 from domain.model import PhoneNumber
-from adapters.repository import AbstractPhoneNumberRepository
+from adapters.cache import AbstractPhoneNumberRepository
 from adapters.gateway import AbstractPhoneNumberGateway
 
 

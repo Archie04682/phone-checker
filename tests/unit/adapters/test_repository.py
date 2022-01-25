@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 from tests.conftest import insert_phone_number, get_phone_number
 from domain.model import PhoneNumber
 from tests.random_generators import random_phone_number, random_digits
-from adapters.repository import PostgresPhoneNumberRepository
+from adapters.cache import PostgresPhoneNumberRepository
 from config import REPOSITORY_ACTUALITY_DELTA
 
 
