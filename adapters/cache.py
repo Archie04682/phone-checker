@@ -5,11 +5,15 @@ from datetime import timedelta, date
 from domain.model import PhoneNumber
 
 
-class PhoneNumberNotFoundError(Exception):
+class CacheError(Exception):
     pass
 
 
-class PhoneNumberOutdatedError(Exception):
+class PhoneNumberNotFoundError(CacheError):
+    pass
+
+
+class PhoneNumberOutdatedError(CacheError):
     pass
 
 
@@ -40,8 +44,8 @@ class PgPhoneNumberPersistentCache(AbstractPhoneNumberCache):
         Retrieve stored PhoneNumber from cache.
         @param digits: str containing digits of PhoneNumber to retrieve.
         @return: PhoneNumber object stored for the given digits.
-        @raise PhoneNumberOutdatedError if the cache record for the given digits is outdated.
-        @raise PhoneNumberNotFoundError if there's no record found for the given digits.
+        @raise adapters.cache.PhoneNumberOutdatedError if the cache record for the given digits is outdated.
+        @raise adapters.cache.PhoneNumberNotFoundError if there's no record found for the given digits.
         """
         if found := self.session.query(PhoneNumber).filter_by(digits=digits).first():
             if self.__actuality_delta > date.today() - found.timestamp:

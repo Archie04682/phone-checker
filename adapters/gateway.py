@@ -33,7 +33,7 @@ class SingleEndpointPhoneNumberGateway(AbstractPhoneNumberGateway):
         Get PhoneNumber for the given digits.
         @param digits: str containing phone number digits to load info for.
         @return: PhoneNumber object containing info for the given digits.
-        @raise: PhoneDataLoadingError if failed to load PhoneNumber for the given digits.
+        @raise: adapters.gateway.PhoneDataLoadingError if failed to load PhoneNumber for the given digits.
         """
         return self.loader.load_phone_number(digits)
 
