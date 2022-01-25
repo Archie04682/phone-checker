@@ -5,13 +5,14 @@ from sqlalchemy.orm import sessionmaker
 from sqlalchemy.orm.session import Session
 
 from config import REPOSITORY_ACTUALITY_DELTA, get_postgres_uri
-from adapters import data_source, gateway, cache
+from adapters import gateway, cache
 from adapters.loaders import nt_phone_number_loader as ep
 from utils.http_provider import HttpProvider
 
 
 class AbstractUnitOfWork(ABC):
-    numbers: data_source.AbstractPhoneNumberDataSource
+    number_gateway: gateway.AbstractPhoneNumberGateway
+    number_cache: cache.AbstractPhoneNumberCache
 
     def __enter__(self):
         return self
@@ -36,12 +37,12 @@ DEFAULT_SESSION_FACTORY = sessionmaker(
 )
 
 
-def phone_gateway_factory() -> gateway.AbstractPhoneNumberGateway:
+def number_gateway_factory() -> gateway.AbstractPhoneNumberGateway:
     loader = ep.NTPhoneNumberLoader(HttpProvider())
     return gateway.SingleEndpointPhoneNumberGateway(loader)
 
 
-def phone_cache_factory(session: Session) -> cache.AbstractPhoneNumberCache:
+def number_cache_factory(session: Session) -> cache.AbstractPhoneNumberCache:
     return cache.PgPhoneNumberPersistentCache(session, REPOSITORY_ACTUALITY_DELTA)
 
 
@@ -51,9 +52,8 @@ class SqlalchemyUnitOfWork(AbstractUnitOfWork):
 
     def __enter__(self):
         self.session = self.session_factory()  # type: Session
-        self.numbers = data_source.PhoneNumberDataSource(
-            phone_gateway_factory(),
-            phone_cache_factory(self.session))
+        self.number_gateway = number_gateway_factory()
+        self.number_cache = number_cache_factory(self.session)
         return super().__enter__()
 
     def __exit__(self, *args):
