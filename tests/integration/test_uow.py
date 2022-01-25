@@ -10,7 +10,7 @@ def test_can_save_phone_number(in_memory_session_factory):
     with uow:
         num_to_set, _ = random_phone_number()
         num_to_set_ref = num_to_set.ref
-        uow.numbers.set(num_to_set)
+        uow.number_cache.put(num_to_set)
         uow.commit()
 
     session = in_memory_session_factory()
@@ -25,7 +25,7 @@ def test_can_retrieve_phone_number(in_memory_session_factory):
 
     uow = SqlalchemyUnitOfWork(in_memory_session_factory)
     with uow:
-        retrieved_num = uow.numbers.get(num.digits)
+        retrieved_num = uow.number_cache.get(num.digits)
         assert retrieved_num is not None
 
 
@@ -33,7 +33,7 @@ def test_rolls_back_without_explicit_commit(in_memory_session_factory):
     uow = SqlalchemyUnitOfWork(in_memory_session_factory)
     with uow:
         num_to_set, _ = random_phone_number()
-        uow.numbers.set(num_to_set)
+        uow.number_cache.put(num_to_set)
 
     session = in_memory_session_factory()
     retrieved_num = get_phone_number(session, num_to_set.ref)
@@ -48,7 +48,7 @@ def test_rolls_back_on_error(in_memory_session_factory):
     with pytest.raises(TestException):
         with uow:
             num_to_set, _ = random_phone_number()
-            uow.numbers.set(num_to_set)
+            uow.number_cache.put(num_to_set)
             raise TestException
 
     session = in_memory_session_factory()
