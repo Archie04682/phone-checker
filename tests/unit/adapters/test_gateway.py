@@ -1,8 +1,8 @@
-from typing import Optional
+import pytest
 
 from tests.random_generators import random_phone_number, random_digits
 from domain.model import PhoneNumber
-from adapters.gateway import SingleEndpointPhoneNumberGateway, AbstractPhoneNumberLoader
+from adapters.gateway import SingleEndpointPhoneNumberGateway, AbstractPhoneNumberLoader, PhoneDataLoadingError
 
 
 class FakePhoneNumberLoader(AbstractPhoneNumberLoader):
@@ -10,12 +10,12 @@ class FakePhoneNumberLoader(AbstractPhoneNumberLoader):
     def __init__(self, return_success: bool = True):
         self._return_success = return_success
 
-    def load_phone_number(self, digits: str) -> Optional[PhoneNumber]:
+    def load_phone_number(self, digits: str) -> PhoneNumber:
         if self._return_success:
             some_phone_number, _ = random_phone_number()
             some_phone_number.digits = digits
             return some_phone_number
-        return None
+        raise PhoneDataLoadingError("test error")
 
 
 def test_uses_loader_to_get_right_phone_number():
@@ -27,9 +27,9 @@ def test_uses_loader_to_get_right_phone_number():
     assert loaded_number.digits == digits_to_load
 
 
-def test_passes_none_from_loaded_on_fail():
+def test_propagates_exceptions_from_loader_on_fail():
     gateway = SingleEndpointPhoneNumberGateway(
         FakePhoneNumberLoader(return_success=False))
-    result = gateway.get(random_digits())
 
-    assert result is None
+    with pytest.raises(PhoneDataLoadingError):
+        _ = gateway.get(random_digits())

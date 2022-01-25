@@ -1,16 +1,23 @@
-from logging import info, warning, error
-from typing import Optional
+from logging import info, warning
 from datetime import date, datetime, timedelta
 
 from bs4 import BeautifulSoup
 
 from config import NTRUBKU_HOST
 from adapters.gateway import AbstractPhoneNumberLoader
-from adapters.data_source import InvalidDocumentStructureError, PhoneDataNotFoundError
+from adapters.gateway import PhoneDataLoadingError
 from domain.model import PhoneNumber, NumberCategory
 from domain.model import PhoneNumberReview, ReviewTag
 from utils import number_formatter
 from utils import http_provider as http
+
+
+class InvalidDocumentStructureError(Exception):
+    def __init__(self,
+                 document_text: str,
+                 message: str = "Invalid Document Structure."):
+        self.document_text = document_text
+        super().__init__(message)
 
 
 class _NTPhoneDataParse:
@@ -175,26 +182,27 @@ class NTPhoneNumberLoader(AbstractPhoneNumberLoader):
         self.__http_prov = http_provider
         self.__host = host
 
-    def load_phone_number(self, digits: str) -> Optional[PhoneNumber]:
+    def load_phone_number(self, digits: str) -> PhoneNumber:
+        """
+        Load PhoneNumber for the given digits.
+        @param digits: str containing phone number digits to load info for.
+        @return: PhoneNumber object containing info for the given digits.
+        @raise: PhoneDataLoadingError if failed to load PhoneNumber for the given digits.
+        """
         with self.__http_prov.get(f"{self.__host}/{digits}", self._heads) as response:
-            if response.status_code == 404:
-                raise PhoneDataNotFoundError(response.body)
-
             if response.status_code != 200:
-                return None
-
+                raise PhoneDataLoadingError(response.body)
             try:
                 soup = BeautifulSoup(response.body, 'html.parser')
-                parsing_result = _NTPhoneDataParse.parse_phone_number(soup)
+                loaded_number = _NTPhoneDataParse.parse_phone_number(soup)
             except InvalidDocumentStructureError:
-                error(f"Failed to parse response "
+                raise PhoneDataLoadingError(f"Failed to parse response "
                       f"for request to {self.__host}/{digits}.")
-                return None
 
-            if parsing_result.digits != digits:
-                warning(f"Failed to load number info - request/response digits mismatch.")
-                return None
+            if loaded_number.digits != digits:
+                raise PhoneDataLoadingError(f"Failed to load number info - "
+                                            f"request/response digits mismatch.")
 
             info(f"Request to {self.__host}/{digits} "
                  f"loaded and parsed successfully.")
-            return parsing_result
+            return loaded_number
