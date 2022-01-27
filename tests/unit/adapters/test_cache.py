@@ -1,7 +1,7 @@
 import pytest
 from sqlalchemy.orm import Session
 
-from tests.conftest import insert_phone_number, get_phone_number
+from tests.conftest import insert_phone_number, get_phone_number, get_table_rows_count
 from domain.model import PhoneNumber
 from tests.random_generators import random_phone_number, random_digits
 from adapters.cache import PgPhoneNumberPersistentCache, PhoneNumberOutdatedError, PhoneNumberNotFoundError
@@ -57,3 +57,16 @@ def test_raises_if_number_not_found_in_cache(in_memory_session_factory):
 
     with pytest.raises(PhoneNumberNotFoundError):
         _ = cache.get(random_digits())
+
+
+def test_overrides_old_copy(in_memory_session_factory):
+    session, cache, stored_number = prepare(in_memory_session_factory)
+
+    new_number, _ = random_phone_number()  # type: PhoneNumber
+    new_number.digits = stored_number.digits
+    cache.put(new_number)
+    session.commit()
+
+    retrieved_number = cache.get(new_number.digits)
+    assert new_number == retrieved_number
+    assert get_table_rows_count(session) == 1

@@ -32,6 +32,12 @@ def get_phone_number(session, ref: str) -> Optional[PhoneNumber]:
     return None
 
 
+def get_table_rows_count(session) -> int:
+    # noinspection SqlNoDataSourceInspection,SqlResolve
+    [[row_count]] = session.execute("SELECT count(*) FROM phone_numbers")
+    return row_count
+
+
 @pytest.fixture
 def in_memory_db():
     engine = create_engine("sqlite:///:memory:")
