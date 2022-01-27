@@ -34,9 +34,11 @@ class PgPhoneNumberPersistentCache(AbstractPhoneNumberCache):
 
     def put(self, number: PhoneNumber):
         """
-        Store a PhoneNumber in the cache
+        Store a PhoneNumber in the cache with possible override of a stored copy.
         @param number: PhoneNumber object to store.
         """
+        if cached_copy := self.session.query(PhoneNumber).filter_by(digits=number.digits).first():
+            self.session.delete(cached_copy)
         self.session.add(number)
 
     def get(self, digits: str) -> PhoneNumber:
