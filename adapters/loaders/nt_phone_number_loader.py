@@ -3,13 +3,14 @@ from datetime import date, datetime, timedelta
 
 from bs4 import BeautifulSoup
 
-from config import NTRUBKU_HOST
 from adapters.gateway import AbstractPhoneNumberLoader
 from adapters.gateway import PhoneDataLoadingError
 from domain.model import PhoneNumber, NumberCategory
 from domain.model import PhoneNumberReview, ReviewTag
 from utils import number_formatter
 from utils import http_provider as http
+
+NTRUBKU_HOST = "https://www.neberitrubku.ru/nomer-telefona"
 
 
 class InvalidDocumentStructureError(Exception):

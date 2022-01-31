@@ -2,9 +2,6 @@ import os
 from datetime import timedelta
 import logging
 
-# Phone Info endpoint settings:
-NTRUBKU_HOST = "https://www.neberitrubku.ru/nomer-telefona"
-
 # Actuality settings:
 REPOSITORY_ACTUALITY_DELTA = timedelta(days=7)
 REVIEW_ACTUALITY_DELTA = timedelta(days=30)
