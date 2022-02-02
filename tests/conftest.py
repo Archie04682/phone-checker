@@ -55,3 +55,25 @@ def in_memory_session_factory(in_memory_db):
 @pytest.fixture
 def in_memory_session(session_factory):
     return session_factory()
+
+
+@pytest.fixture
+def fake_gateway_factory():
+    class FakeGatewayFactory:
+        call_count = 0
+
+        def __call__(self):
+            self.call_count += 1
+
+    yield FakeGatewayFactory()
+
+
+@pytest.fixture
+def fake_cache_factory():
+    class FakeCacheFactory:
+        call_count = 0
+
+        def __call__(self, _):
+            self.call_count += 1
+
+    yield FakeCacheFactory()

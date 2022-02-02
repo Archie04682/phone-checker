@@ -5,6 +5,18 @@ from tests.random_generators import random_phone_number
 from service_layer.unit_of_work import SqlalchemyUnitOfWork
 
 
+def test_calls_factories_on_context_startup(in_memory_session_factory, fake_gateway_factory, fake_cache_factory):
+    assert fake_gateway_factory.call_count == 0
+    assert fake_cache_factory.call_count == 0
+
+    uow = SqlalchemyUnitOfWork(in_memory_session_factory, fake_gateway_factory, fake_cache_factory)
+    with uow:
+        pass
+
+    assert fake_gateway_factory.call_count == 1
+    assert fake_cache_factory.call_count == 1
+
+
 def test_can_save_phone_number(in_memory_session_factory):
     uow = SqlalchemyUnitOfWork(in_memory_session_factory)
     with uow:

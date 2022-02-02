@@ -47,13 +47,19 @@ def number_cache_factory(session: Session) -> cache.AbstractPhoneNumberCache:
 
 
 class SqlalchemyUnitOfWork(AbstractUnitOfWork):
-    def __init__(self, session_factory=DEFAULT_SESSION_FACTORY):
+    def __init__(
+            self,
+            session_factory=DEFAULT_SESSION_FACTORY,
+            gateway_factory=number_gateway_factory,
+            cache_factory=number_cache_factory):
         self.session_factory = session_factory
+        self.gateway_factory = gateway_factory
+        self.cache_factory = cache_factory
 
     def __enter__(self):
         self.session = self.session_factory()  # type: Session
-        self.number_gateway = number_gateway_factory()
-        self.number_cache = number_cache_factory(self.session)
+        self.number_gateway = self.gateway_factory()
+        self.number_cache = self.cache_factory(self.session)
         return super().__enter__()
 
     def __exit__(self, *args):
