@@ -1,0 +1,92 @@
+{% extends "base_template.html" %}
+
+{% block title %}
+    {{ phoneNumber.digits }} - Информация о номере
+{% endblock %}
+
+{% block content %}
+
+    <div class="container">
+        <div class="row">
+            {# Номер и рейтинг #}
+            <div class="col-lg-6 p-4">
+                <p class="h5">Номер:</p>
+                <p class="h1">{{ phoneNumber.digits }}
+                    {% if phoneNumber.rating == 0.0 %}
+                        <span class="badge rounded-pill bg-secondary">{{ "%.1f"|format(phoneNumber.rating|float) }}</span>
+                    {% elif phoneNumber.rating >= 4.0 %}
+                        <span class="badge rounded-pill bg-success">{{ "%.1f"|format(phoneNumber.rating|float) }}</span>
+                    {% elif phoneNumber.rating >= 3.0 %}
+                        <span class="badge rounded-pill bg-warning">{{ "%.1f"|format(phoneNumber.rating|float) }}</span>
+                    {% else %}
+                        <span class="badge rounded-pill bg-danger">{{ "%.1f"|format(phoneNumber.rating|float) }}</span>
+                    {% endif %}
+                </p>
+            </div>
+
+            {# Информация о номере #}
+            <div class="col-lg-6 p-4">
+                {% if phoneNumber.description %}
+                    <p>{{ phoneNumber.description }}</p>
+                {% endif %}
+
+                {% if phoneNumber.categories|length %}
+                    <p class="h5">Категории:</p>
+                    <p>
+                        {% for cat in phoneNumber.categories %}
+                            <span class="badge rounded-pill bg-primary">{{ cat }}</span>
+                        {% endfor %}
+                    </p>
+                {% endif %}
+
+                <p>
+                    {% if phoneNumber.is_actual %}
+                        Информация о номере недавно обновлялась ✅
+                    {% else %}
+                        Информация о номере давно не обновлялась и может быть неактуальной ❌
+                    {% endif %}
+                </p>
+            </div>
+        </div>
+
+        {# Актуальные отзывы #}
+        <div class="row row-centered">
+            {% if phoneNumber.actual_reviews|length > 0 %}
+                <div class="col-lg-8 mx-auto text-center">
+                    <p class="h5">Отзывы:</p>
+                </div>
+                <div class="col-lg-8 p-4 mx-auto">
+                    {% for review in phoneNumber.actual_reviews %}
+                        {% with rev = review %}
+                            {% include "review.html" %}
+                        {% endwith %}
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+
+        {# Старые отзывы #}
+        {% if phoneNumber.old_reviews|length > 0 %}
+            <div class="row text-center">
+                <div class="col pb-4 mx-auto">
+                    <button class="btn btn-secondary" type="button" data-bs-toggle="collapse"
+                            data-bs-target="#oldReviewsCollapse" aria-expanded="false" aria-controls="collapseExample">
+                        Неактуальные отзывы
+                    </button>
+                </div>
+            </div>
+            <div class="row row-centered">
+                <div class="collapse" id="oldReviewsCollapse">
+                    <div class="col-lg-8 p-4 mx-auto">
+                        {% for review in phoneNumber.old_reviews %}
+                            {% with rev = review %}
+                                {% include "review.html" %}
+                            {% endwith %}
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+
+{% endblock %}

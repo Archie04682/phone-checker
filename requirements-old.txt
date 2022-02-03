@@ -2,7 +2,7 @@ Flask~=2.0.2
 # Flask-SQLAlchemy~=2.5.1
 Beautifulsoup4~=4.10.0
 requests==2.27.1
-phonenumbers~=8.12.41
+phonenumbers~=8.12.37
 gunicorn~=20.1.0
 psycopg2-binary~=2.9.2
 WTForms~=3.0.0
