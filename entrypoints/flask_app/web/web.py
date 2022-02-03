@@ -3,7 +3,6 @@ from werkzeug.exceptions import InternalServerError
 
 from service_layer import services, unit_of_work
 from entrypoints.flask_app.web import forms
-from domain import model
 
 web = Blueprint(
     'phone-web-app',
@@ -22,8 +21,6 @@ def internal_error(_):
 def index():
     phone_form = forms.PhoneNumberForm()
     email_form = forms.EmailForm()
-    print(web.template_folder)
-    print(web.static_folder)
     if phone_form.validate_on_submit():
         return redirect(url_for('phone-web-app.number', num=phone_form.phone_number.data))
 

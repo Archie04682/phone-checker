@@ -38,7 +38,8 @@ DEFAULT_SESSION_FACTORY = sessionmaker(
     bind=create_engine(
         get_postgres_uri(),
         isolation_level="REPEATABLE READ"
-    )
+    ),
+    expire_on_commit=False
 )
 
 
