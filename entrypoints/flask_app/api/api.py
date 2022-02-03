@@ -6,7 +6,6 @@ from werkzeug.exceptions import InternalServerError
 from service_layer import services
 from service_layer import unit_of_work
 
-
 api = Blueprint('phone-app-api', __name__)
 
 

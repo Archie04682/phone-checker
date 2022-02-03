@@ -3,7 +3,6 @@ from typing import Any
 import pytest
 from random import choice
 
-import adapters.gateway
 from domain.model import PhoneNumber
 from adapters.cache import AbstractPhoneNumberCache, PhoneNumberNotFoundError, PhoneNumberOutdatedError
 from adapters.gateway import AbstractPhoneNumberGateway, PhoneDataLoadingError
