@@ -1,3 +1,5 @@
+from typing import Any
+
 import pytest
 from random import choice
 
@@ -49,6 +51,9 @@ class FakeUnitOfWork(AbstractUnitOfWork):
         self.committed = True
 
     def rollback(self):
+        pass
+
+    def expunge(self, model_object: Any):
         pass
 
 

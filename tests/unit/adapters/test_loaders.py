@@ -1,3 +1,5 @@
+import datetime
+
 import pytest
 import pickle
 from os.path import dirname
@@ -13,6 +15,9 @@ from adapters.gateway import PhoneDataLoadingError
 
 actual_phone_number = pickle.loads(
     Path(f"{dirname(__file__)}/_files/nt_obj_sample.bin").read_bytes())  # type: PhoneNumber
+actual_phone_number.timestamp = datetime.date.today()
+actual_phone_number.reviews[2].publish_date = datetime.date.today() - datetime.timedelta(weeks=44)
+
 fake_good_response = HttpResponse(
     200, Path(f"{dirname(__file__)}/_files/nt_html_sample.html").read_text("utf-8"))
 fake_invalid_data_response = HttpResponse(
