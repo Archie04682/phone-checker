@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+from typing import Any
 
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
@@ -26,6 +27,10 @@ class AbstractUnitOfWork(ABC):
 
     @abstractmethod
     def rollback(self):
+        raise NotImplementedError
+
+    @abstractmethod
+    def expunge(self, model_object: Any):
         raise NotImplementedError
 
 
@@ -71,3 +76,6 @@ class SqlalchemyUnitOfWork(AbstractUnitOfWork):
 
     def rollback(self):
         self.session.rollback()
+
+    def expunge(self, model_object: Any):
+        self.session.expunge(model_object)

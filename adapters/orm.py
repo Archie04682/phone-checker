@@ -55,7 +55,7 @@ def start_mappers():
         PhoneNumberReview,
         reviews,
         properties={
-            "tags": relationship(ReviewTag)
+            "tags": relationship(ReviewTag, lazy="joined", cascade="expunge")
         }
     )
 
@@ -65,8 +65,8 @@ def start_mappers():
         PhoneNumber,
         phone_numbers,
         properties={
-            "categories": relationship(NumberCategory),
-            "reviews": relationship(PhoneNumberReview)
+            "categories": relationship(NumberCategory, lazy="joined", cascade="expunge"),
+            "reviews": relationship(PhoneNumberReview, lazy="joined", cascade="expunge")
         }
     )
 

@@ -29,4 +29,5 @@ def get_number(digits: str, uow: AbstractUnitOfWork) -> PhoneNumber:
                 uow.commit()
             except PhoneDataLoadingError:
                 raise FailedToLoadPhoneNumberError
+        uow.expunge(number_to_return)
         return number_to_return
